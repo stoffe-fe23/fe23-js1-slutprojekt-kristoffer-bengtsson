@@ -239,6 +239,31 @@ button#pages-nav-goto {
   height: 18px;
 }
 
+#search-genre-controls {
+  display: flex;
+  align-items: center;
+}
+
+#filter-method-picker {
+  display: inline-flex;
+  gap: 1.5rem;
+  margin-left: 2rem;
+  background-color: rgb(20, 20, 20);
+  padding: 0.5rem 1rem;
+  border-radius: 16px;
+}
+
+#filter-method-picker input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.4rem;
+}
+
+#filter-method-picker > div {
+  display: inline-flex;
+  align-items: center;
+}
+
 .checkbox-wrapper {
   margin: 0.5rem;
 }

@@ -35,9 +35,15 @@
         <form id="filter-form" class="hide">
           <label for="search-genre">What are you interested in?</label>
           <div id="search-genre"></div>
-          <button id="filter-submit">Show</button>
-          <button id="filter-deselect-all">Deselect All</button>
-          <button id="filter-select-all">Select All</button>
+          <div id="search-genre-controls">
+            <button id="filter-submit">Show</button>
+            <button id="filter-deselect-all">Deselect All</button>
+            <button id="filter-select-all">Select All</button>
+            <div id="filter-method-picker">
+              <div><input type="radio" value="selected-all" name="filter-method" id="filter-method-all" checked /><label for="filter-method-all">Only selected genres match</label></div>
+              <div><input type="radio" value="selected-one" name="filter-method" id="filter-method-one" /><label for="filter-method-one">At least one selected genre match</label></div>
+            </div>
+          </div>
         </form>
         <!-- Ev. felmeddelanden visas här -->
         <div id="errors"></div>
@@ -49,12 +55,13 @@
           <div id="pages-next"><button id="pages-nav-next">Next »</button></div>
           <div id="pages-last"><button id="pages-nav-last">Last »»</button></div>
         </form>
-        <!-- Sökresultat och topplistor visas här -->
+        <!-- Visa Sökresultat och topplistor -->
         <div id="results"></div>
       </div>
     </main>
     <!-- Popup-dialogruta: Visa detaljerad info om en film eller person -->
     <dialog id="details-dialog"></dialog>
+    <!-- Popup-dialogruta: Ange vilken sida av sökresultat att gå till -->
     <dialog id="pages-goto-dialog">
       <form id="pages-goto-form" method="dialog" autocomplete="off">
         <label for="pages-goto-page">Go to page</label>

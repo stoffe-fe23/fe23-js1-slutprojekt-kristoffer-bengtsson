@@ -48,6 +48,8 @@ document.querySelector("#display-mode-toprated").addEventListener("click", (even
 	document.querySelector("#search-form").classList.add("hide");
 	document.querySelector("#filter-form").classList.remove("hide");
 
+	const onlySelectedGenres = true;
+
 	resetSearchResults();
 	loadMovieTopLists("vote_average.desc");
 });
@@ -58,6 +60,8 @@ document.querySelector("#display-mode-toprated").addEventListener("click", (even
 document.querySelector("#display-mode-popular").addEventListener("click", (event) => {
 	document.querySelector("#search-form").classList.add("hide");
 	document.querySelector("#filter-form").classList.remove("hide");
+
+	const onlySelectedGenres = true;
 
 	resetSearchResults();
 	loadMovieTopLists("popularity.desc");
@@ -212,7 +216,7 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 		requestURL.searchParams.append("vote_count.gte", "200");
 		requestURL.searchParams.append("with_genres", showGenres.selected.join("|"));
 		
-		if (showGenres.excluded.length > 0) {
+		if ((showGenres.excluded.length > 0) && showGenres.onlyShowSelected) {
 			requestURL.searchParams.append("without_genres", showGenres.excluded.join("|"));
 		}
 		fetchJSON(requestURL, showMovieToplist);
@@ -227,6 +231,8 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 // Hämta ut listor på valda och icke-valda genres i toppliste-filtret
 function getSelectedGenres() {
 	const genreBoxes = document.querySelectorAll(`#search-genre input[name="search-genre"]`);
+	const filterType = document.querySelector(`#search-genre-controls input[name="filter-method"]:checked`).value;
+	console.log("FILTERTYPE", filterType);
 	const selectedGenres = [];
 	const excludedGenres = [];
 
@@ -241,7 +247,7 @@ function getSelectedGenres() {
 			
 		}
 	}
-	return { selected: selectedGenres, excluded: excludedGenres };
+	return { selected: selectedGenres, excluded: excludedGenres, onlyShowSelected: (filterType == "selected-all") };
 }
 
 
