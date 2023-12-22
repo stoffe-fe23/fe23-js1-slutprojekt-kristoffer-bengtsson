@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS1 Slutprojekt - The Movie Database</title>
+    <script src="js/main.js" type="module"></script>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main>
+      <noscript>N.B. This page requires Javascript to be active in your browser in order to function.</noscript>
+      <!-- "Flikar" för val av vad som ska visas på sidan -->
+      <form id="display-mode-form">
+        <span class="display-mode-tab"><input type="radio" name="display-mode" id="display-mode-search" value="search" checked /><label for="display-mode-search">Search</label></span>
+        <span class="display-mode-tab"><input type="radio" name="display-mode" id="display-mode-toprated" value="toprated" /><label for="display-mode-toprated">Top rated movies</label></span>
+        <span class="display-mode-tab"><input type="radio" name="display-mode" id="display-mode-popular" value="popular" /><label for="display-mode-popular">Popular movies</label></span>
+      </form>
+      <!-- Sidinnehållet, innehåll beror på aktiv flik -->
+      <div id="content-container">
+        <!-- Sök på film/person: Visas på Search-fliken -->
+        <form id="search-form">
+          <div id="search-form-wrapper">
+            <label for="search-input">Search for</label>
+            <select id="search-type">
+              <option value="movie">Movie</option>
+              <option value="person">Person</option>
+            </select>
+            <input type="text" id="search-input" />
+            <button id="search-submit">Search!</button>
+          </div>
+          <div id="search-form-summary"></div>
+        </form>
+        <!-- Genrefilter: Visas på Top/Popular-flikarna -->
+        <form id="filter-form" class="hide">
+          <label for="search-genre">What are you interested in?</label>
+          <div id="search-genre"></div>
+          <button id="filter-submit">Show</button>
+          <button id="filter-deselect-all">Deselect All</button>
+          <button id="filter-select-all">Select All</button>
+        </form>
+        <!-- Ev. felmeddelanden visas här -->
+        <div id="errors"></div>
+        <!-- Sido-nav om sökresultat har mer än en sida -->
+        <form id="pages-nav">
+          <div id="pages-first"><button id="pages-nav-first">«« First</button></div>
+          <div id="pages-prev"><button id="pages-nav-prev">« Back</button></div>
+          <div id="pages-curr"><button id="pages-nav-goto">Pages: 0 / 0</button></div>
+          <div id="pages-next"><button id="pages-nav-next">Next »</button></div>
+          <div id="pages-last"><button id="pages-nav-last">Last »»</button></div>
+        </form>
+        <!-- Sökresultat och topplistor visas här -->
+        <div id="results"></div>
+      </div>
+    </main>
+    <!-- Popup-dialogruta: Visa detaljerad info om en film eller person -->
+    <dialog id="details-dialog"></dialog>
+    <dialog id="pages-goto-dialog">
+      <form id="pages-goto-form" method="dialog" autocomplete="off">
+        <label for="pages-goto-page">Go to page</label>
+        <input type="number" id="pages-goto-page" value="1" min="1" required />
+        <button id="pages-goto-submit">Go</button>
+      </form>
+    </dialog>
+    <!-- Snurrande indikator som visar användaren att sidan jobbar med något -->
+    <div id="busy">
+      <div id="busy-backdrop"><div id="busy-spinner"></div></div>
+    </div>
+    <!-- Template-bild som används för att visa betygspoäng -->
+    <svg version="2.0" id="points-template">
+      <defs>
+        <symbol id="points-image" viewBox="0 0 10.583333 10.583334">
+          <g transform="translate(0,-286.41665)">
+            <path
+              d="m 2.4496271,296.18123 c -0.1419001,-0.0718 -0.327438,-0.33924 -0.3267878,-0.47105 2.639e-4,-0.0538 0.1046237,-0.70359 0.2319072,-1.44394 l 0.2314247,-1.34608 -1.02746,-1.00486 c -0.97737656,-0.95589 -1.02873432,-1.01484 -1.05360868,-1.20935 -0.0325126,-0.25424 0.0753027,-0.47582 0.28361106,-0.58287 0.085616,-0.044 0.68842082,-0.15261 1.45002612,-0.26126 0.7169214,-0.10229 1.331273,-0.19619 1.3652263,-0.20868 0.033953,-0.0125 0.3308386,-0.57468 0.6597455,-1.24929 0.6660923,-1.3662 0.7459236,-1.47373 1.0941009,-1.47373 0.3481774,0 0.4280089,0.10753 1.0941008,1.47373 0.3289071,0.67461 0.6257926,1.2368 0.6597458,1.24929 0.033954,0.0125 0.6483048,0.10639 1.3652256,0.20868 0.7616057,0.10865 1.3644101,0.21727 1.4500267,0.26126 0.2083087,0.10705 0.3161257,0.32863 0.2836117,0.58287 -0.02488,0.19451 -0.07623,0.25346 -1.0534667,1.20921 l -1.0273169,1.00473 0.2365886,1.38201 c 0.1302008,0.76057 0.2235124,1.43412 0.2075107,1.49787 -0.055193,0.21992 -0.2666606,0.40142 -0.4980942,0.4275 -0.2012069,0.0227 -0.2747274,-0.009 -1.4561011,-0.63305 -0.6843066,-0.36131 -1.2521306,-0.65693 -1.261831,-0.65693 -0.0097,0 -0.573105,0.29328 -1.2520108,0.65174 -1.2720347,0.67164 -1.4051288,0.71923 -1.6561745,0.5922 z"
+            />
+          </g>
+        </symbol>
+      </defs>
+    </svg>
+  </body>
+</html>
