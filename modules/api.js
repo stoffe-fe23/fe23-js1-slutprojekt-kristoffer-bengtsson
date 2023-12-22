@@ -5,7 +5,7 @@
 	Funktionalitet för att hämta information från API.
 */
 
-const apiToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZjlmZTVkYjM0MzY5NTMwMTUxNDAxZGNhZmMxNzhiMiIsInN1YiI6IjY1ODAwNWNkOGRiYzMzMDhiMDk5N2E5NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KIgUPg4AvT3idD6H0OUXoxmJdh26yFKIavJPi0oNBso";
+const apiKey = "ff9fe5db34369530151401dcafc178b2";
 let displayErrorMessage = logErrorMessage;
 
 
@@ -13,15 +13,8 @@ let displayErrorMessage = logErrorMessage;
 // Hämta information från API och skicka till callback-funktion
 async function fetchJSON(url, callbackFunc, errorFunc = errorHandlerDefault) {
     try {
-        const options = {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-                Authorization: `Bearer ${apiToken}`
-            }
-        };
-
-        const response = await fetch(url, options);
+        url.searchParams.append("api_key", apiKey);
+        const response = await fetch(url);
         if (!response.ok)
             throw new MovieAPIError(response.statusText, response.status);
 

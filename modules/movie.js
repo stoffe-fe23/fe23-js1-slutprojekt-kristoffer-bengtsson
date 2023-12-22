@@ -5,7 +5,7 @@
 	Funktionalitet för att visa info om filmer från The Movie Database API.
 */
 
-import {fetchJSON} from '../modules/api.js';
+import {fetchJSON, MovieAPIError} from '../modules/api.js';
 import {createImageElement, createTextField, createFieldTitle, createCheckboxOption, createListField, createMovieScorePointElement, createLinkField, createWrapperBox, animateFlipInElements} from '../modules/dom-utilities.js';
 
 
