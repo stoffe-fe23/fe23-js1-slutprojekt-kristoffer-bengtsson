@@ -13,8 +13,11 @@ import {fetchJSON, setAPIErrorDisplayFunction} from '../modules/api.js';
 /*
   TODO: 
   [_] Språk-kod till språk-namn på movie details sidan
-  [_] Styla knappar i page-nav
+  [_] Kunna flörpa upp/ner genre-filtret på topplistesidorna
   [_] Styla sökformulär och genre-filter (olika knapp-stil på primär och extraknappar etc)
+  [_] Städa i CSS-filen, strukturera och gruppera regler. Dela upp i separata filer?
+  [_] plocka bort console.log debugutskrifter
+  [_] Kolla felhantering, vad som händer vid diverse fail states etc
 */
 
 // Innehåller info om senaste sökningen som användaren gjort

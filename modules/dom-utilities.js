@@ -12,8 +12,8 @@ import anime from '../lib/anime.es.js';
 // Returnera ett bild-element
 export function createImageElement(url, text, placeholderImage = '../images/no-poster.png', cssClass = '') {
 	const imageElement = document.createElement("img");
-	imageElement.alt = (getIsValid(text) ? text : "No description");
-	imageElement.src = (getIsValid(url, 10) ? url : placeholderImage);
+	imageElement.alt = (getIsValidText(text) ? text : "No description");
+	imageElement.src = (getIsValidText(url, 10) ? url : placeholderImage);
 	if (cssClass.length > 0 ) {
 		imageElement.classList.add(cssClass);
 	}
@@ -32,10 +32,10 @@ export function createTextField(title, text, cssClass = '', allowHTML = false) {
         textField.appendChild(createFieldTitle(title));    
     }
 	if (allowHTML) {
-		textField.innerHTML += (getIsValid(text) ? text : " - ");
+		textField.innerHTML += (getIsValidText(text) ? text : " - ");
 	}
 	else {
-		textField.appendChild(document.createTextNode(getIsValid(text) ? text : " - "));
+		textField.appendChild(document.createTextNode(getIsValidText(text) ? text : " - "));
 	}
 	
 	return textField;
@@ -46,7 +46,7 @@ export function createTextField(title, text, cssClass = '', allowHTML = false) {
 // Returnera ett rubrik-element av angiven rubriksnivå
 export function createFieldTitle(text, type = "h3", cssClass = '') {
 	const fieldTitle = document.createElement(type);
-	fieldTitle.innerText = ( getIsValid(text) ? text : "Untitled" );
+	fieldTitle.innerText = ( getIsValidText(text) ? text : "Untitled" );
 	if (cssClass.length > 0 ) {
 		fieldTitle.classList.add(cssClass);
 	}
@@ -81,11 +81,11 @@ export function addListOption(listElement, text, url) {
 		const itemLink = document.createElement("a");
 		itemLink.target = "_blank";
 		itemLink.href = url;
-		itemLink.innerHTML = ( getIsValid(text) ? text : " - " );
+		itemLink.innerHTML = ( getIsValidText(text) ? text : " - " );
 		listItem.appendChild(itemLink);
 	}
 	else {
-		listItem.innerHTML = ( getIsValid(text) ? text : " - " );
+		listItem.innerHTML = ( getIsValidText(text) ? text : " - " );
 	}
 	listElement.appendChild(listItem);
 	return listItem;
@@ -154,7 +154,7 @@ export function createLinkField(title, text, url, cssClass = '') {
 	if (url !== null) {
 		linkElem.target = "_blank";
 		linkElem.href = url;
-		linkElem.innerText = (getIsValid(text) ? text : "Click here");
+		linkElem.innerText = (getIsValidText(text) ? text : "Click here");
 		linkField.appendChild(linkElem);
 	}
 	else {
@@ -212,6 +212,6 @@ export function animateFlipInElements(elemClass) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Kontrollera om angiven parameter är en giltig text-variabel av tillräcklig längd
-function getIsValid(text, minLength = 0) {
+function getIsValidText(text, minLength = 0) {
 	return (text !== undefined) && (text !== null) && (text.length > minLength);
 }

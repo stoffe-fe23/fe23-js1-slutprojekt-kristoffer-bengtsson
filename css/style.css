@@ -81,15 +81,46 @@ input[name="display-mode"] {
 
 #pages-nav {
   display: none;
-  background-color: rgb(70, 70, 70);
+  background-color: rgb(40, 40, 40);
   justify-content: center;
   align-items: center;
-  padding: 1rem;
-  gap: 2rem;
+  padding: 0.5rem 0.5rem;
+  gap: 1rem;
+  border-radius: 25px;
+  width: fit-content;
+  margin: 1.5rem auto 0 auto;
 }
 
 #pages-nav.show {
   display: flex;
+}
+
+#pages-nav button {
+  padding: 0.2rem 1rem;
+  border-radius: 0;
+  margin: 0px;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+button#pages-nav-first {
+  border-radius: 15px 0 0 15px;
+}
+
+button#pages-nav-prev {
+  border-radius: 15px 0 0 15px;
+}
+
+button#pages-nav-next {
+  border-radius: 0 15px 15px 0;
+}
+
+button#pages-nav-last {
+  border-radius: 0 15px 15px 0;
+}
+
+button#pages-nav-goto {
+  font-weight: 700;
 }
 
 #results {
@@ -240,7 +271,7 @@ form input:focus {
 }
 
 form button:focus,
-form button:hover {
+form button:not(:disabled):hover {
   background-color: yellow;
   box-shadow: 0px 0px 15px yellow, 0px 0px 30px orange;
   outline: 0;
