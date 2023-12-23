@@ -156,6 +156,7 @@ document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 	else if (event.submitter.id == "pages-nav-goto") {
 		const pageInput = document.querySelector("#pages-goto-page");
 		pageInput.setAttribute("max", lastSearch.pageMax);
+		pageInput.value = lastSearch.page;
 		pageInput.select();
 		document.querySelector("#pages-goto-dialog").showModal();
 	}
