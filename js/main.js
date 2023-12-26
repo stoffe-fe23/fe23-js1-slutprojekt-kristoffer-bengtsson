@@ -1,14 +1,14 @@
 /*
-    Slutprojekt (The Movie Database API) - FE23 Javascript 1
-    Kristoffer Bengtsson
+	Slutprojekt (The Movie Database API) - FE23 Javascript 1
+	Kristoffer Bengtsson
 
 	Main-script för sidan.
 */
 
 import anime from '../lib/anime.es.js';
-import {displayPeopleList} from '../modules/person.js';
-import {displayMovieList} from '../modules/movie.js';
-import {fetchJSON, setAPIErrorDisplayFunction} from '../modules/api.js';
+import { displayPeopleList } from '../modules/person.js';
+import { displayMovieList } from '../modules/movie.js';
+import { fetchJSON, setAPIErrorDisplayFunction } from '../modules/api.js';
 
 /*
   TODO: 
@@ -26,7 +26,7 @@ const lastSearch = {
 	query: '',
 	page: 0,
 	pageMax: 0,
-	perPage: 20 
+	perPage: 20
 }
 
 // Animation för snurrande upptagen-indikator
@@ -71,8 +71,11 @@ document.querySelector("#display-mode-popular").addEventListener("click", (event
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // NAV - Klickad flik: Sök efter film eller person
 document.querySelector("#display-mode-search").addEventListener("click", (event) => {
+	const inputField = document.querySelector("#search-input");
 	document.querySelector("#search-form").classList.remove("hide");
 	document.querySelector("#filter-form").classList.add("hide");
+	inputField.value = "";
+	inputField.focus();
 	resetSearchResults();
 });
 
@@ -82,7 +85,7 @@ document.querySelector("#display-mode-search").addEventListener("click", (event)
 document.querySelector("#search-form").addEventListener("submit", (event) => {
 	event.preventDefault();
 
-    const searchType = document.querySelector("#search-type");
+	const searchType = document.querySelector("#search-type");
 	const searchInput = document.querySelector("#search-input");
 	const inputText = searchInput.value.trim();
 
@@ -112,7 +115,7 @@ document.querySelector("#filter-form").addEventListener("submit", (event) => {
 	event.preventDefault();
 
 	// Markera/avmarkera all kryssturor
-	if ((event.submitter.id == "filter-deselect-all") || (event.submitter.id == "filter-select-all") ) {
+	if ((event.submitter.id == "filter-deselect-all") || (event.submitter.id == "filter-select-all")) {
 		const checkedBoxes = event.target.querySelectorAll(`input[type="checkbox"]`);
 		for (const checkedBox of checkedBoxes) {
 			checkedBox.checked = (event.submitter.id == "filter-select-all");
@@ -139,19 +142,19 @@ document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 	event.preventDefault();
 	if (event.submitter.id == "pages-nav-prev") {
 		if (lastSearch.page > 1) {
-			findSearchResultPage(lastSearch.page - 1); 
+			findSearchResultPage(lastSearch.page - 1);
 		}
 	}
 	else if (event.submitter.id == "pages-nav-next") {
 		if (lastSearch.page < lastSearch.pageMax) {
-			findSearchResultPage(lastSearch.page + 1); 
-		}	
+			findSearchResultPage(lastSearch.page + 1);
+		}
 	}
 	else if (event.submitter.id == "pages-nav-first") {
-			findSearchResultPage(1); 
+		findSearchResultPage(1);
 	}
 	else if (event.submitter.id == "pages-nav-last") {
-			findSearchResultPage(lastSearch.pageMax); 
+		findSearchResultPage(lastSearch.pageMax);
 	}
 	else if (event.submitter.id == "pages-nav-goto") {
 		const pageInput = document.querySelector("#pages-goto-page");
@@ -168,7 +171,7 @@ document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 document.querySelector("#pages-goto-form").addEventListener("submit", (event) => {
 	const pageInput = document.querySelector("#pages-goto-page").value;
 	if ((pageInput !== undefined) && !isNaN(pageInput) && (pageInput.length > 0) && (pageInput >= 1) && (pageInput <= lastSearch.pageMax)) {
-		findSearchResultPage(pageInput); 
+		findSearchResultPage(pageInput);
 	}
 	else {
 		displayErrorMessage(`Invalid page of search results specified. It must be a number between 1 and ${lastSearch.pageMax}.`);
@@ -180,13 +183,13 @@ document.querySelector("#pages-goto-form").addEventListener("submit", (event) =>
 // Klicka utanför eller tryck på ESC-tangenten: Stäng Movie/Person-details dialogrutan
 document.querySelector("#details-dialog").addEventListener("click", (event) => {
 	if (event.target.id == event.currentTarget.id) {
-	event.currentTarget.close();
+		event.currentTarget.close();
 	}
 });
 
 document.querySelector("#details-dialog").addEventListener("keydown", (event) => {
 	if (event.key == "Escape") {
-	event.currentTarget.close();
+		event.currentTarget.close();
 	}
 });
 
@@ -200,7 +203,7 @@ document.querySelector("#details-dialog").addEventListener("keydown", (event) =>
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Hämta Top Rater eller Popular movies topplista från API
 function loadMovieTopLists(listType, showResultPage = 1) {
-    const requestURL = new URL("https://api.themoviedb.org/3/discover/movie");
+	const requestURL = new URL("https://api.themoviedb.org/3/discover/movie");
 	const showGenres = getSelectedGenres();
 
 	// Rensa sparad data om senaste sökning och dölj sidnav-raden om den är synlig
@@ -216,7 +219,7 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 		requestURL.searchParams.append("page", showResultPage);
 		requestURL.searchParams.append("vote_count.gte", "200");
 		requestURL.searchParams.append("with_genres", showGenres.selected.join("|"));
-		
+
 		if ((showGenres.excluded.length > 0) && showGenres.onlyShowSelected) {
 			requestURL.searchParams.append("without_genres", showGenres.excluded.join("|"));
 		}
@@ -245,7 +248,7 @@ function getSelectedGenres() {
 			else {
 				excludedGenres.push(genreBox.value);
 			}
-			
+
 		}
 	}
 	return { selected: selectedGenres, excluded: excludedGenres, onlyShowSelected: (filterType == "selected-all") };
@@ -256,8 +259,8 @@ function getSelectedGenres() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Visa topp-10 lista över filmer
 function showMovieToplist(movies) {
-    const resultsBox = document.querySelector("#results");
-    displayMovieList(movies, resultsBox, 10);
+	const resultsBox = document.querySelector("#results");
+	displayMovieList(movies, resultsBox, 10);
 	setIsBusy(false);
 }
 
@@ -353,13 +356,13 @@ function displayPageNav(currentPage, totalPages) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Visa felmeddelande för användaren 
 function displayErrorMessage(errorText) {
-    if (errorText.length > 0) {
-        const errorBox = document.querySelector("#errors");
-        const errorMessage = document.createElement("div");
-        errorMessage.innerText = errorText;
-        errorBox.appendChild(errorMessage);
-        errorBox.classList.add("show");
-    }
+	if (errorText.length > 0) {
+		const errorBox = document.querySelector("#errors");
+		const errorMessage = document.createElement("div");
+		errorMessage.innerText = errorText;
+		errorBox.appendChild(errorMessage);
+		errorBox.classList.add("show");
+	}
 	setIsBusy(false);
 }
 
@@ -381,7 +384,7 @@ function resetSearchResults() {
 function displaySearchSummary(currentCount, totalCount) {
 	const searchSummaryBox = document.querySelector("#search-form-summary");
 	const searchType = document.querySelector("#search-type option:checked").innerText.toLowerCase();
-	
+
 	// Nollställ och göm summering-rutan.
 	if (currentCount === false) {
 		searchSummaryBox.classList.remove("show");
@@ -391,9 +394,9 @@ function displaySearchSummary(currentCount, totalCount) {
 	else {
 		searchSummaryBox.classList.add("show");
 	}
-	
+
 	currentCount = (currentCount === undefined) || isNaN(currentCount) ? 0 : currentCount;
-	totalCount = (totalCount === undefined) || isNaN(totalCount) ? 0 : totalCount;	
+	totalCount = (totalCount === undefined) || isNaN(totalCount) ? 0 : totalCount;
 	if ((currentCount == 0) || (totalCount == 0)) {
 		searchSummaryBox.innerText = `No ${searchType} matched your search.`;
 	}
@@ -407,7 +410,7 @@ function displaySearchSummary(currentCount, totalCount) {
 		else {
 			searchSummaryBox.innerText = `${totalCount} ${searchType}${totalCount == 1 ? "" : "s"} found, showing ${intervalStart}-${intervalEnd}.`;
 		}
-		
+
 	}
 	else {
 		searchSummaryBox.innerText = `${currentCount} ${searchType}${currentCount == 1 ? "" : "s"} found.`;
@@ -425,9 +428,9 @@ function setIsBusy(isBusy) {
 		busyAnimation = anime({
 			targets: "#busy-spinner",
 			duration: 2000,
-			easing: 'linear', 
+			easing: 'linear',
 			autoplay: false,
-			loop: true, 
+			loop: true,
 			keyframes: [
 				{ rotate: '360deg', easing: 'linear' },
 			],
@@ -442,7 +445,7 @@ function setIsBusy(isBusy) {
 		busyBox.classList.add("show");
 		busyAnimation.play();
 		document.querySelector("#search-submit").disabled = true;
-		document.querySelector("#filter-submit").disabled = true;	
+		document.querySelector("#filter-submit").disabled = true;
 	}
 	else {
 		busyAnimation.restart();
