@@ -6,7 +6,7 @@
 */
 
 const apiKey = "ff9fe5db34369530151401dcafc178b2";
-let displayErrorMessage = logErrorMessage;
+let displayErrorMessage = console.log;
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ function errorHandlerDefault(error) {
             case 503: displayErrorMessage("The Movie Database is currently unavailable. Try again later?"); break;
             default: displayErrorMessage("An error occurred when accessing The Movie Database. Try again?"); break;
         }
-        console.log("MovieAPIError", error.errorCode, error.message);
+        console.log("MovieAPI Error", error.errorCode, error.message);
     }
     else {
         displayErrorMessage("An error occurred while fetching information from The Movie Database. Try again?");
@@ -52,14 +52,7 @@ function errorHandlerDefault(error) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Standardmetod för visning av felmeddelande om setAPIErrorDisplayFunction() ej anropats
-function logErrorMessage(errorText) {
-    console.log("Error!", errorText);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Sätt vilken funktion som skall användas för att visa felmeddelande för användaren
+// Sätt funktion som skall användas för att visa felmeddelande för användaren
 function setAPIErrorDisplayFunction(displayFunction) {
     displayErrorMessage = displayFunction;
 }

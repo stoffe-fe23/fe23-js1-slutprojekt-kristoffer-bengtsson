@@ -8,8 +8,11 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+    <header>
+      <h1>Movie Database</h1>
+      <noscript>N.B. This page requires Javascript to be active in your browser in order to function!</noscript>
+    </header>
     <main>
-      <noscript>N.B. This page requires Javascript to be active in your browser in order to function.</noscript>
       <!-- "Flikar" för val av vad som ska visas på sidan -->
       <form id="display-mode-form">
         <span class="display-mode-tab"><input type="radio" name="display-mode" id="display-mode-search" value="search" checked /><label for="display-mode-search">Search</label></span>
@@ -40,8 +43,8 @@
             <button id="filter-deselect-all">Deselect All</button>
             <button id="filter-select-all">Select All</button>
             <div id="filter-method-picker">
-              <div><input type="radio" value="selected-all" name="filter-method" id="filter-method-all" checked /><label for="filter-method-all">Only selected genres match</label></div>
-              <div><input type="radio" value="selected-one" name="filter-method" id="filter-method-one" /><label for="filter-method-one">At least one selected genre match</label></div>
+              <div><input type="radio" value="selected-only" name="filter-method" id="filter-method-all" checked /><label for="filter-method-all">Only selected genres</label></div>
+              <div><input type="radio" value="selected-one" name="filter-method" id="filter-method-one" /><label for="filter-method-one">At least one selected genre</label></div>
             </div>
           </div>
         </form>

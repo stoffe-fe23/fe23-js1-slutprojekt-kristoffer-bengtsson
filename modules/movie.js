@@ -6,14 +6,25 @@
 */
 
 import {fetchJSON, MovieAPIError} from '../modules/api.js';
-import {createImageElement, createTextField, createFieldTitle, createCheckboxOption, createListField, createMovieScorePointElement, createLinkField, createWrapperBox, animateFlipInElements} from '../modules/dom-utilities.js';
+import {
+	createImageElement, 
+	createTextField, 
+	createFieldTitle, 
+	createCheckboxOption, 
+	createListField, 
+	createMovieScorePointElement, 
+	createLinkField, 
+	createWrapperBox, 
+	animateFlipInElements, 
+	animateFadeInScoreElements
+} from '../modules/dom-utilities.js';
 
 
 const movieGenreList = {};
 const imagesUrl = "https://image.tmdb.org/t/p/w342"; 
 
 
-// Bygg genreväljare-menyn och uppslagslista för genre-namn
+// Bygg genreväljare-rutorna och uppslagslista för genre-namn
 fetchMovieGenres( (genreList) => {
 	const genreSelector = document.querySelector("#search-genre");
 	genreSelector.innerHTML = "";
@@ -40,15 +51,19 @@ function showMovieDetails(event) {
 	event.preventDefault();
 
 	const movieId = parseInt(event.currentTarget.getAttribute("movie-id"));
-	console.log("MOVIEID", movieId);
 	if ((movieId !== undefined) && (movieId !== null) && !isNaN(movieId)) {
 		const requestURL = new URL(`https://api.themoviedb.org/3/movie/${movieId}`);
-		console.log("URL", requestURL);
 		fetchJSON(requestURL, (movie) => {
-			console.log("MOVIEDATA", movie);
 			const detailsBox = document.querySelector("#details-dialog");
+
+			// Bygg absulut URL till affischbild
+			if ((movie.poster_path !== undefined) && (movie.poster_path !== null) && (movie.poster_path.length > 5)) {
+				movie.poster_path = imagesUrl + movie.poster_path;
+			}
+
 			getMovieDetailsCard(movie, detailsBox);
 			detailsBox.showModal();
+			animateFadeInScoreElements('scored');
 		});
 	}
 }
@@ -59,7 +74,7 @@ function showMovieDetails(event) {
 function fetchMovieGenres(callbackFunc) {
     const requestURL = new URL(`https://api.themoviedb.org/3/genre/movie/list`);
     requestURL.searchParams.append("language", "en");
-    fetchJSON(requestURL, callbackFunc, errorHandlerBackground);
+    fetchJSON(requestURL, callbackFunc, errorHandlerFetchGenres);
 }
 
 
@@ -90,7 +105,7 @@ function displayMovieList(movies, container, listItemLimit = 10) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Returnera ett info-kort om en film (DOM-element)
 function getMovieCard(movie, showDescription = false) {
-	const movieCard = createWrapperBox(undefined, '', ['card', 'card-movie']);
+	const movieCard = createWrapperBox(undefined, '', ['card', 'card-movie'], 'article');
 	const movieImage = createImageElement(movie.poster_path, `Movie poster for ${movie.title}`);
 	const movieTitle = createFieldTitle(movie.title, "h2");
 	movieCard.appendChild(movieImage);
@@ -114,6 +129,8 @@ function getMovieCard(movie, showDescription = false) {
 function getMovieDetailsCard(movie, container) {
 	container.innerHTML = "";
 
+	const languages = new Intl.DisplayNames('en', {type: 'language'});
+
 	const detailsBox = createWrapperBox(container, "details");
 	const moviePoster = createWrapperBox(detailsBox, "details-image");
 	const movieInfo = createWrapperBox(detailsBox, "details-info");
@@ -122,7 +139,7 @@ function getMovieDetailsCard(movie, container) {
 	const movieOverview = movie.overview.replaceAll("\n", "<br>").trim();
 
 	// Poster
-	moviePoster.appendChild(createImageElement(imagesUrl + movie.poster_path, `Poster for the movie ${movie.title}`));
+	moviePoster.appendChild(createImageElement(movie.poster_path, `Poster for the movie ${movie.title}`, '../images/no-poster.png'));
 
 	// Info
 	movieInfo.appendChild(createFieldTitle(movie.title, "h2", "details-title"));
@@ -133,7 +150,7 @@ function getMovieDetailsCard(movie, container) {
 	movieInfo.appendChild(createMovieScoreDisplay('User score', movie.vote_average));
 
 	// Stats
-	movieStats.appendChild(createTextField('Original language', movie.original_language, "details-language")); // TODO: Översätt språk-kod till språknamn
+	movieStats.appendChild(createTextField('Original language', languages.of(movie.original_language), "details-language")); 
 	movieStats.appendChild(createTextField('Release date', movie.release_date, "details-release"));
 	movieStats.appendChild(createTextField('Status', movie.status, "details-status"));
 	movieStats.appendChild(createLinkField('More', "IMDB", `https://www.imdb.com/title/${movie.imdb_id}/`, "details-link"));
@@ -192,8 +209,8 @@ function createMovieScoreDisplay(title, score) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Felhanterare för icke-kritiska API-anrop som görs i bakgrunden
-function errorHandlerBackground(error) {
+// Felhanterare för hämtning av lista över genres
+function errorHandlerFetchGenres(error) {
     if (error instanceof MovieAPIError) {
         console.log("Background data loading error", error.errorCode, error.message);
     }

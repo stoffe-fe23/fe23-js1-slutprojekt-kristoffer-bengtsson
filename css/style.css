@@ -3,6 +3,7 @@
 }
 
 :root {
+  --contentMaxWidth: 1490px;
   --activeTabColor: grey;
   --inactiveTabColor: lightgrey;
 }
@@ -28,14 +29,22 @@ a:active {
   color: yellow;
 }
 
+header {
+  max-width: var(--contentMaxWidth);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  color: white;
+}
+
 main {
-  max-width: 1490px;
+  max-width: var(--contentMaxWidth);
   margin: 2rem auto;
 }
 
 #content-container {
   background-color: var(--activeTabColor);
-  max-width: 1490px;
+  max-width: var(--contentMaxWidth);
   margin: 0.5rem;
   padding: 2rem;
 }
@@ -60,7 +69,7 @@ input[name="display-mode"] {
 
 #display-mode-form {
   margin: 0.5rem;
-  max-width: 1490px;
+  max-width: var(--contentMaxWidth);
 }
 
 #display-mode-form label {
@@ -439,7 +448,7 @@ form button:not(:disabled):hover {
 
 .points.scored {
   opacity: 1;
-  fill: orange;
+  fill: gold;
 }
 
 #busy {

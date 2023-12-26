@@ -2,7 +2,8 @@
 	Slutprojekt (The Movie Database API) - FE23 Javascript 1
 	Kristoffer Bengtsson
 
-	Main-script för sidan.
+	Sida som visar topplistor och sökresultat från The Movie Database API.
+	https://www.themoviedb.org/
 */
 
 import anime from '../lib/anime.es.js';
@@ -10,13 +11,12 @@ import { displayPeopleList } from '../modules/person.js';
 import { displayMovieList } from '../modules/movie.js';
 import { fetchJSON, setAPIErrorDisplayFunction } from '../modules/api.js';
 
+
 /*
   TODO: 
-  [_] Språk-kod till språk-namn på movie details sidan
   [_] Kunna flörpa upp/ner genre-filtret på topplistesidorna
   [_] Styla sökformulär och genre-filter (olika knapp-stil på primär och extraknappar etc)
   [_] Städa i CSS-filen, strukturera och gruppera regler. Dela upp i separata filer?
-  [_] plocka bort console.log debugutskrifter
   [_] Kolla felhantering, vad som händer vid diverse fail states etc
 */
 
@@ -137,25 +137,31 @@ document.querySelector("#filter-form").addEventListener("submit", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// SUBMIT: Sidnavigering för sökresultat (vid stora sökresultat uppdelade på flera sidor)
+// SUBMIT: Sidnavigering-formulär för sökresultat (vid stora sökresultat uppdelade på flera sidor)
 document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 	event.preventDefault();
+	event.submitter.blur();
+	// Föregående sida-knappen
 	if (event.submitter.id == "pages-nav-prev") {
 		if (lastSearch.page > 1) {
 			findSearchResultPage(lastSearch.page - 1);
 		}
 	}
+	// Nästa sida-knappen
 	else if (event.submitter.id == "pages-nav-next") {
 		if (lastSearch.page < lastSearch.pageMax) {
 			findSearchResultPage(lastSearch.page + 1);
 		}
 	}
+	// Första sidan-knappen
 	else if (event.submitter.id == "pages-nav-first") {
 		findSearchResultPage(1);
 	}
+	// Sista sidan-knappen
 	else if (event.submitter.id == "pages-nav-last") {
 		findSearchResultPage(lastSearch.pageMax);
 	}
+	// Ange sida-knappen
 	else if (event.submitter.id == "pages-nav-goto") {
 		const pageInput = document.querySelector("#pages-goto-page");
 		pageInput.setAttribute("max", lastSearch.pageMax);
@@ -167,7 +173,7 @@ document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// SUBMIT: Dialogruta för att ange en specifik sida att gå till i sökresultatet
+// SUBMIT: Dialogruta-formulär för att ange en specifik sida att gå till i sökresultatet
 document.querySelector("#pages-goto-form").addEventListener("submit", (event) => {
 	const pageInput = document.querySelector("#pages-goto-page").value;
 	if ((pageInput !== undefined) && !isNaN(pageInput) && (pageInput.length > 0) && (pageInput >= 1) && (pageInput <= lastSearch.pageMax)) {
@@ -201,7 +207,7 @@ document.querySelector("#details-dialog").addEventListener("keydown", (event) =>
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Hämta Top Rater eller Popular movies topplista från API
+// Hämta Top Rated eller Popular movies topplista från API
 function loadMovieTopLists(listType, showResultPage = 1) {
 	const requestURL = new URL("https://api.themoviedb.org/3/discover/movie");
 	const showGenres = getSelectedGenres();
@@ -229,31 +235,6 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 		displayErrorMessage("Please select at least one genre of movies to show.");
 	}
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Hämta ut listor på valda och icke-valda genres i toppliste-filtret
-function getSelectedGenres() {
-	const genreBoxes = document.querySelectorAll(`#search-genre input[name="search-genre"]`);
-	const filterType = document.querySelector(`#search-genre-controls input[name="filter-method"]:checked`).value;
-	console.log("FILTERTYPE", filterType);
-	const selectedGenres = [];
-	const excludedGenres = [];
-
-	if ((genreBoxes !== undefined) && (genreBoxes.length > 0)) {
-		for (const genreBox of genreBoxes) {
-			if (genreBox.checked) {
-				selectedGenres.push(genreBox.value);
-			}
-			else {
-				excludedGenres.push(genreBox.value);
-			}
-
-		}
-	}
-	return { selected: selectedGenres, excluded: excludedGenres, onlyShowSelected: (filterType == "selected-all") };
-}
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -315,11 +296,11 @@ function showSearchResults(searchResults) {
 			displayPeopleList(searchResults, resultsBox);
 		}
 		else {
-			displayErrorMessage("Unhandled search result received.");
+			displayErrorMessage("Unhandled search result type received.");
 		}
 	}
 	else {
-		displayErrorMessage("There was no match for your search. Try something else?");
+		displayErrorMessage("There was no match for your search. Try searching for something else?");
 	}
 }
 
@@ -333,23 +314,39 @@ function displayPageNav(currentPage, totalPages) {
 	lastSearch.pageMax = ((totalPages === undefined) || isNaN(totalPages) ? 0 : totalPages);
 
 	if (lastSearch.pageMax > 1) {
-		const firstPageButton = pagesNav.querySelector("#pages-nav-first");
-		const prevPageButton = pagesNav.querySelector("#pages-nav-prev");
-		const gotoPageButton = pagesNav.querySelector("#pages-nav-goto");
-		const nextPageButton = pagesNav.querySelector("#pages-nav-next");
-		const lastPageButton = pagesNav.querySelector("#pages-nav-last");
-
-		gotoPageButton.innerHTML = `Page ${lastSearch.page} / ${lastSearch.pageMax}`;
-		firstPageButton.disabled = (currentPage == 1);
-		prevPageButton.disabled = !(currentPage > 1);
-		nextPageButton.disabled = !(currentPage < totalPages);
-		lastPageButton.disabled = (currentPage == lastSearch.pageMax);
-
+		pagesNav.querySelector("#pages-nav-goto").innerHTML = `Page ${lastSearch.page} / ${lastSearch.pageMax}`;
+		pagesNav.querySelector("#pages-nav-first").disabled = (currentPage == 1);
+		pagesNav.querySelector("#pages-nav-prev").disabled = !(currentPage > 1);
+		pagesNav.querySelector("#pages-nav-next").disabled = !(currentPage < totalPages);
+		pagesNav.querySelector("#pages-nav-last").disabled = (currentPage == lastSearch.pageMax);
 		pagesNav.classList.add("show");
 	}
 	else {
 		pagesNav.classList.remove("show");
 	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Hämta listor på valda och icke-valda genres i topplistor-filtret
+function getSelectedGenres() {
+	const genreBoxes = document.querySelectorAll(`#search-genre input[name="search-genre"]`);
+	const filterType = document.querySelector(`#search-genre-controls input[name="filter-method"]:checked`).value;
+	const selectedGenres = [];
+	const excludedGenres = [];
+
+	if ((genreBoxes !== undefined) && (genreBoxes.length > 0)) {
+		for (const genreBox of genreBoxes) {
+			if (genreBox.checked) {
+				selectedGenres.push(genreBox.value);
+			}
+			else {
+				excludedGenres.push(genreBox.value);
+			}
+
+		}
+	}
+	return { selected: selectedGenres, excluded: excludedGenres, onlyShowSelected: (filterType == "selected-only") };
 }
 
 
@@ -419,7 +416,7 @@ function displaySearchSummary(currentCount, totalCount) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa användaren att sidan håller på att jobba med något som tar lite tid och spärra nya sökningar under tiden
+// Visa användaren att sidan håller på med något som tar lite tid och spärra nya sökningar under tiden
 function setIsBusy(isBusy) {
 	const busyBox = document.querySelector("#busy");
 

@@ -23,6 +23,10 @@ function showPersonDetails(event) {
 		const requestURL = new URL(`https://api.themoviedb.org/3/person/${personId}`);
 		fetchJSON(requestURL, (person) => {
 			const detailsBox = document.querySelector("#details-dialog");
+      		// Bygg absolut URL till porträtt-bilden
+			if ((person.profile_path !== undefined) && (person.profile_path !== null) && (person.profile_path.length > 5)) {
+				person.profile_path = imagesUrl + person.profile_path;
+			}
 			getPersonDetailsCard(person, detailsBox);
 			detailsBox.showModal();
 		});
@@ -49,7 +53,7 @@ function getPersonDetailsCard(person, container) {
 	}
 
 	// Poster
-	personPhoto.appendChild(createImageElement(imagesUrl + person.profile_path, `Photo of ${person.name}`, '../images/no-photo.png'));
+	personPhoto.appendChild(createImageElement(person.profile_path, `Photo of ${person.name}`, '../images/no-photo.png'));
 
 	// Info
 	personInfo.appendChild(createFieldTitle(person.name, "h2", "details-name"));
@@ -73,12 +77,9 @@ function getPersonDetailsCard(person, container) {
 // Visa översikt över en samling filmer i angivet container-element
 function displayPeopleList(people, container) {
 	container.innerHTML = "";
-	
-	console.log(people.results);
-
 	if (people.total_results > 0) {
 		for (const person of people.results) {
-      // Bygg absolut URL till porträtt-bilderna
+      		// Bygg absolut URL till porträtt-bilderna
 			if ((person.profile_path !== undefined) && (person.profile_path !== null) && (person.profile_path.length > 5)) {
 				person.profile_path = imagesUrl + person.profile_path;
 			}
@@ -92,7 +93,7 @@ function displayPeopleList(people, container) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Returnera ett DOM-element med ett info-kort om en person
 function getPersonCard(person) {
-	const personCard = createWrapperBox(undefined, '', ['card', 'card-person']);
+	const personCard = createWrapperBox(undefined, '', ['card', 'card-person'], 'article');
 	const personName = createFieldTitle(person.name, "h2");
 	const personPhoto = createImageElement(person.profile_path, `Photo of ${person.name}`, '../images/no-photo.png');
 	personCard.append(

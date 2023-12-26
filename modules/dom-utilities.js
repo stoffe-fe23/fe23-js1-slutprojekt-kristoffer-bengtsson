@@ -168,10 +168,10 @@ export function createLinkField(title, text, url, cssClass = '') {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett nyskapat DIV-element med angivet ID och ev. klass
-export function createWrapperBox(parentContainer, elementID, cssClass = '') {
-	const wrapperBox = document.createElement("div");
-	if (elementID !== undefined) {
+// Returnera ett nyskapat container-element med angivet ID och ev. klasser
+export function createWrapperBox(parentContainer, elementID, cssClass = '', elementType = 'div') {
+	const wrapperBox = document.createElement(elementType);
+	if ((elementID !== undefined) && (elementID.length > 0)) {
 		wrapperBox.id = elementID;
 	}
 	if (cssClass.length > 0 ) {
@@ -211,7 +211,28 @@ export function animateFlipInElements(elemClass) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Kontrollera om angiven parameter är en giltig text-variabel av tillräcklig längd
+// Animera element med angiven klass så de tonas in från genomskinlig grå till guld
+export function animateFadeInScoreElements(elemClass) {
+	anime({
+		targets: `.${elemClass}`,
+		duration: 1000,
+		easing: 'easeInQuint', 
+		autoplay: true,
+		delay: anime.stagger(100), 
+		opacity: [
+			{value: '0.2', duration: 0, easing: 'linear'},
+			{value: '1', easing: 'easeInQuint'},
+		],
+		fill: [
+			{value: 'rgb(255,255,255)', duration: 0, easing: 'linear'},
+			{value: 'rgb(255, 215, 0', easing: 'easeInQuint'},
+		]
+	});
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Kontrollera om angiven parameter är en giltig textsträng av tillräcklig längd
 function getIsValidText(text, minLength = 0) {
 	return (text !== undefined) && (text !== null) && (text.length > minLength);
 }
