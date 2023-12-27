@@ -4,6 +4,9 @@
 
 	Sida som visar topplistor och sökresultat från The Movie Database API.
 	https://www.themoviedb.org/
+
+    Använder anime.js för animation av genrefilter-rutan och busy-indikator.
+    https://animejs.com/
 */
 
 import anime from '../lib/anime.es.js';
@@ -25,14 +28,6 @@ let busyAnimation;
 
 // Sätt funktion som skall användas för att visa API/fetch-fel för användaren
 setAPIErrorDisplayFunction(displayErrorMessage);
-
-
-/*
-  TODO: 
-  [_] Städa i CSS-filen, strukturera och gruppera regler. Dela upp i separata filer?
-  [_] Kolla felhantering, vad som händer vid diverse fail states etc
-  [_] Lusläs koden så inget gammalt skröfs ligger kvar
-*/
 
 
 /*****************************************************************************************************
@@ -349,8 +344,8 @@ function displayPageNav(currentPage, totalPages) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Returnera listor på valda och icke-valda genres i topplistor-filtret
 function getFilterSelectedGenres() {
-	const genreBoxes = document.querySelectorAll(`#search-genre input[name="search-genre"]`);
-	const filterType = document.querySelector(`#search-genre-controls input[name="filter-method"]:checked`).value;
+	const genreBoxes = document.querySelectorAll(`#filter-genre input[name="filter-genre"]`);
+	const filterType = document.querySelector(`#filter-genre-controls input[name="filter-method"]:checked`).value;
 	const selectedGenres = [];
 	const excludedGenres = [];
 
@@ -473,14 +468,14 @@ function setIsBusy(isBusy) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Fäll upp/ner genre-filtet på topplista-sidorna
-function showGenreFilter(displayFilter) {
-	const genrePicker = document.querySelector("#search-genre");
-	const formControls = document.querySelector("#search-genre-controls");
+function showGenreFilter(filterVisible) {
+	const genrePicker = document.querySelector("#filter-genre");
+	const formControls = document.querySelector("#filter-genre-controls");
 
-	if (displayFilter) {
+	if (filterVisible) {
 		genrePicker.classList.remove("hide");
 		anime({
-			targets: "#search-genre",
+			targets: "#filter-genre",
 			duration: 500,
 			easing: 'linear', 
 			autoplay: true,
@@ -491,7 +486,7 @@ function showGenreFilter(displayFilter) {
 		}).finished.then(() => {
 			formControls.classList.remove("hide");
 			anime({
-				targets: "#search-genre-controls",
+				targets: "#filter-genre-controls",
 				duration: 350,
 				easing: 'linear', 
 				autoplay: true,
@@ -504,7 +499,7 @@ function showGenreFilter(displayFilter) {
 	}
 	else {
 		anime({
-			targets: "#search-genre-controls",
+			targets: "#filter-genre-controls",
 			duration: 350,
 			easing: 'linear', 
 			autoplay: true,
@@ -515,7 +510,7 @@ function showGenreFilter(displayFilter) {
 		}).finished.then(() => {
 			formControls.classList.add("hide");
 			anime({
-				targets: "#search-genre",
+				targets: "#filter-genre",
 				duration: 500,
 				easing: 'linear', 
 				autoplay: true,

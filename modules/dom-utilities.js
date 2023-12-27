@@ -3,6 +3,9 @@
     Kristoffer Bengtsson
 
 	Gemensamma verktygsfunktioner för att skapa DOM-element för visning av film/person-info.
+
+    Använder anime.js för animation av kort-visning och betygspoäng.
+    https://animejs.com/
 */
 
 import anime from '../lib/anime.es.js';
@@ -129,7 +132,7 @@ export function createMovieScorePointElement(isScored = false) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett textelement med hyperlänk och en rubrik
+// Returnera ett hyperlänkat textelement med rubrik
 export function createLinkField(title, text, url, cssClass = '') {
 	const linkField = document.createElement("div");
 	const linkElem = document.createElement("a");
@@ -157,13 +160,13 @@ export function createLinkField(title, text, url, cssClass = '') {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett nyskapat container-element med angivet ID och ev. klasser
+// Returnera ett nyskapat container-element med angivet ID
 export function createWrapperBox(parentContainer, elementID, cssClass = '', elementType = 'div') {
 	const wrapperBox = document.createElement(elementType);
 	if ((elementID !== undefined) && (elementID.length > 0)) {
 		wrapperBox.id = elementID;
 	}
-	if (cssClass.length > 0 ) {
+	if (cssClass.length > 0) {
 		if (Array.isArray(cssClass)) {
 			wrapperBox.classList.add(...cssClass);
 		}
@@ -179,7 +182,7 @@ export function createWrapperBox(parentContainer, elementID, cssClass = '', elem
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Animera element med angiven klass så de tonas in och växer till full bredd.
+// Animera element med angiven klass så de tonas in och växer ut till full bredd.
 export function animateFlipInElements(elemClass) {
 	anime({
 		targets: `.${elemClass}`,

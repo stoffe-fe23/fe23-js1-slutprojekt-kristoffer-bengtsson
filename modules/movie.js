@@ -23,27 +23,14 @@ import {
 } from '../modules/dom-utilities.js';
 
 
-// Lista för översättning av genre-ID till genre-namn
-const movieGenreList = {};
-
 // Bas-URL för film-affischer
 const imagesUrl = "https://image.tmdb.org/t/p/w342"; 
 
+// Lista för översättning av genre-ID till genre-namn
+const movieGenreList = {};
 
-// Bygg genreväljare-rutorna och uppslagslista för genre-namn
-// Se: https://developer.themoviedb.org/reference/genre-movie-list
-fetchJSON(`https://api.themoviedb.org/3/genre/movie/list`, (genreList) => {
-	const genreSelector = document.querySelector("#search-genre");
-	genreSelector.innerHTML = "";
-
-	if ((genreList.genres !== undefined) && (genreList.genres !== null) && Array.isArray(genreList.genres) && (genreList.genres.length > 0)) {
-		genreList.genres.sort( (genreA, genreB) => genreA.name.localeCompare(genreB.name));
-		for (const genre of genreList.genres) {
-			genreSelector.appendChild(createCheckboxOption(genre.name, genre.id, "search-genre"));
-			movieGenreList[genre.id] = genre.name;
-		}
-	}
-}, "Unable to load genre list. Movie filters may be unavailable.");
+// Bygg genreväljare-rutorna och uppslagslista för genre-namn när sidan laddas.
+fetchGenreData();
 
 
 /*****************************************************************************************************
@@ -205,6 +192,27 @@ function createMovieScoreDisplay(title, score) {
     }
 	scoreBox.appendChild(scoreValueBox);
 	return scoreBox;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Hämta genre-data från API och bygg uppslagslista och filter-kryssrutor
+// Se: https://developer.themoviedb.org/reference/genre-movie-list
+function fetchGenreData() {
+	const errorMessage = "Unable to load genre list. Movie filters may be unavailable.";
+
+	fetchJSON('https://api.themoviedb.org/3/genre/movie/list', (genreList) => {
+		const genreSelector = document.querySelector("#filter-genre");
+		genreSelector.innerHTML = "";
+
+		if ((genreList.genres !== undefined) && (genreList.genres !== null) && Array.isArray(genreList.genres) && (genreList.genres.length > 0)) {
+			genreList.genres.sort( (genreA, genreB) => genreA.name.localeCompare(genreB.name));
+			for (const genre of genreList.genres) {
+				genreSelector.appendChild(createCheckboxOption(genre.name, genre.id, "filter-genre"));
+				movieGenreList[genre.id] = genre.name;
+			}
+		}
+	}, errorMessage);
 }
 
 

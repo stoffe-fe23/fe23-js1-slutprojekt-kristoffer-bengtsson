@@ -1,0 +1,217 @@
+/*
+    Slutprojekt (The Movie Database API) - FE23 Javascript 1
+    Kristoffer Bengtsson
+
+	  Stylesheet för informationskort om filmer och personer.
+*/
+
+/*****************************************************************************************************/
+/* Översikts-kort med info om en film eller person */
+
+.card {
+  position: relative;
+  background-color: black;
+  color: white;
+  width: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+  padding-bottom: 1.5rem;
+  text-align: center;
+}
+
+.card img {
+  max-width: 100%;
+}
+
+.card img {
+  cursor: pointer;
+}
+
+.card h2 {
+  text-align: center;
+  color: orange;
+  text-transform: uppercase;
+  padding: 0px 1rem;
+  cursor: pointer;
+}
+
+.card h2:hover {
+  color: yellow;
+}
+
+.card h3 {
+  margin: 0.8rem 0px 0px 0px;
+  color: lightblue;
+}
+
+.card > div {
+  padding: 0 1.5rem;
+}
+
+.card ul {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.card a,
+.card a:visited {
+  color: white;
+  text-decoration: none;
+}
+
+.card a:focus,
+.card a:active,
+.card a:hover {
+  color: yellow;
+}
+
+.movie-description {
+  margin-top: 1.2rem;
+  font-size: 0.95em;
+  font-style: italic;
+}
+
+/* Visa lista över filmer/tv-serier en person är känd för */
+
+.workhistory-list li:first-of-type {
+  margin-top: 0.4rem;
+}
+
+.workhistory-list li {
+  margin: 0.25rem 0;
+  padding: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.075);
+  text-align: left;
+  font-size: 0.9em;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.workhistory-list li span:first-of-type {
+  background-color: darkgrey;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.7em;
+  text-transform: uppercase;
+  margin-right: 0.7rem;
+  width: 55px;
+  text-align: center;
+}
+
+.workhistory-list li span:first-of-type.type-tv {
+  background-color: blue;
+}
+
+.workhistory-list li span:first-of-type.type-movie {
+  background-color: green;
+}
+
+/*****************************************************************************************************/
+/* Visa detaljerat kort med info om en film eller person */
+
+#details {
+  display: grid;
+  grid-template-areas:
+    "details-image details-info"
+    "details-stats details-stats";
+  grid-template-columns: 300px 1fr;
+  justify-content: start;
+  gap: 2rem;
+  width: 800px;
+}
+
+#details-image {
+  grid-area: details-image;
+  background-color: black;
+}
+
+#details-image img {
+  max-width: 300px;
+}
+
+#details-info {
+  grid-area: details-info;
+  display: relative;
+}
+
+#details-stats {
+  grid-area: details-stats;
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(60, 60, 60);
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.details-name,
+.details-title {
+  margin: 0px;
+  font-size: 2.8rem;
+  color: rgb(223, 233, 139);
+  line-height: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.details-tagline {
+  font-style: italic;
+  color: lightcyan;
+  margin-bottom: 1rem;
+}
+
+.details-biography,
+.details-overview {
+  font-size: 0.9em;
+  max-width: 70ch;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 0.5rem 1rem;
+  background-color: rgb(25, 25, 25);
+}
+
+#details-stats h3 {
+  display: inline;
+  font-weight: 700;
+  font-size: 1em;
+  color: lightblue;
+}
+
+#details-stats h3::after {
+  content: ":";
+  margin-right: 0.5rem;
+}
+
+#details-info h3 {
+  margin: 1rem 0px 0px 0px;
+  color: lightskyblue;
+  font-size: 1.05em;
+}
+
+#details-info .genre-list ul {
+  margin: 0px;
+  padding-left: 1.5rem;
+}
+
+/* Poäng-stjärnor för att visa användarbetyg för filmer */
+
+#points-template {
+  display: none;
+}
+
+.points {
+  width: 20px;
+  height: 20px;
+  opacity: 0.2;
+}
+
+.points:not(.scored) {
+  fill: white;
+}
+
+.points.scored {
+  opacity: 1;
+  fill: gold;
+}

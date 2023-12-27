@@ -1,0 +1,221 @@
+/*
+    Slutprojekt (The Movie Database API) - FE23 Javascript 1
+    Kristoffer Bengtsson
+
+	  Stylesheet för formulär för sökning, filtrering och visning av sökresultat och topplistor.
+*/
+
+form > label {
+  font-weight: 700;
+}
+
+form input,
+form select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid black;
+  border-radius: 15px;
+}
+
+form button {
+  font-family: "Open Sans", Arial, sans-serif;
+  font-size: 1rem;
+  padding: 0.4rem 0.75rem;
+  margin: 0 0 0 0.75rem;
+  border-radius: 15px;
+  border: 0px;
+  background-color: orange;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+form input:focus {
+  outline: 0;
+}
+
+form button:focus,
+form button:not(:disabled):hover {
+  background-color: yellow;
+  box-shadow: 0px 0px 15px yellow, 0px 0px 30px orange;
+  outline: 0;
+}
+
+/*****************************************************************************************************/
+/* Formulär för att filtrera topplistorna utifrån genre */
+
+#filter-form {
+  background-color: black;
+  color: white;
+  padding: 0;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+#filter-form h2 {
+  margin: 0;
+  padding: 0.3rem 2rem;
+  background-color: rgb(40, 40, 40);
+  text-align: center;
+}
+
+#filter-hide {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+#filter-hide.hidden {
+  transform: rotate(180deg);
+}
+
+/* Kryssrutor för val av genres */
+
+#filter-genre {
+  column-count: 7;
+  column-gap: 2rem;
+  margin: 0.5rem 2rem 1rem 2rem;
+  transform-origin: top center;
+}
+
+#filter-form.hide,
+#filter-genre.hide {
+  display: none;
+}
+
+#filter-genre input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+#filter-genre .checkbox-wrapper {
+  margin: 0.5rem;
+}
+
+#filter-genre .checkbox-wrapper:first-of-type {
+  margin-top: 0;
+}
+
+/* Knappar för att (av)markera alla genre-rutor och applicera filtret */
+
+#filter-genre-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0.4rem 2rem;
+  background-color: rgb(30, 30, 30);
+  transform-origin: bottom center;
+}
+
+#filter-genre-controls.hide {
+  display: none;
+}
+
+#filter-genre-controls button {
+  font-size: 0.8em;
+  opacity: 0.8;
+}
+
+#filter-genre-controls #filter-submit {
+  font-size: 1em;
+  opacity: 1;
+}
+
+/* Inställning hur genre-filtreringen skall göras */
+
+#filter-method-picker {
+  display: inline-flex;
+  gap: 1.5rem;
+  margin-left: 2rem;
+  padding: 0.5rem 1rem;
+}
+
+#filter-method-picker input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.4rem;
+}
+
+#filter-method-picker > div {
+  display: inline-flex;
+  align-items: center;
+}
+
+/*****************************************************************************************************/
+/* Formulär för att söka bland filmer och personer */
+
+#search-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  background-color: black;
+  color: white;
+  padding: 1rem 2rem;
+  margin-bottom: 1rem;
+}
+
+#search-form.hide {
+  display: none;
+}
+
+#search-form-summary {
+  display: none;
+  font-weight: 700;
+  font-size: 0.95em;
+  color: yellow;
+}
+
+#search-form-summary.show {
+  display: block;
+}
+
+/*****************************************************************************************************/
+/* Sid-navigation för sökresultat med flera sidor */
+
+#pages-nav {
+  display: none;
+  background-color: rgb(40, 40, 40);
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0.5rem;
+  gap: 1rem;
+  border-radius: 25px;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 1.5rem auto 0 auto;
+}
+
+#pages-nav.show {
+  display: flex;
+}
+
+#pages-nav button {
+  padding: 0.2rem 1rem;
+  border-radius: 0;
+  margin: 0px;
+  text-transform: uppercase;
+  font-weight: 400;
+  font-size: 0.9em;
+}
+
+button#pages-nav-first {
+  border-radius: 15px 0 0 15px;
+}
+
+button#pages-nav-prev {
+  border-radius: 15px 0 0 15px;
+}
+
+button#pages-nav-next {
+  border-radius: 0 15px 15px 0;
+}
+
+button#pages-nav-last {
+  border-radius: 0 15px 15px 0;
+}
+
+button#pages-nav-goto {
+  font-weight: 700;
+}
