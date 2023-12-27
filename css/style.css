@@ -15,7 +15,7 @@
 body {
   margin: 0px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  background-color: rgb(40, 40, 40);
+  background-color: rgb(27, 43, 63);
 }
 
 a,
@@ -47,6 +47,7 @@ main {
   max-width: var(--contentMaxWidth);
   margin: 0.5rem;
   padding: 2rem;
+  box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.4);
 }
 
 #errors {
@@ -67,12 +68,12 @@ input[name="display-mode"] {
   left: -100px;
 }
 
-#display-mode-form {
+#display-mode-tabs {
   margin: 0.5rem;
   max-width: var(--contentMaxWidth);
 }
 
-#display-mode-form label {
+#display-mode-tabs label {
   background-color: var(--inactiveTabColor);
   padding: 0.5rem 1.5rem 0.5rem 1.5rem;
   border-radius: 12px 12px 0px 0px;
@@ -81,7 +82,7 @@ input[name="display-mode"] {
   cursor: pointer;
 }
 
-#display-mode-form input:checked ~ label {
+#display-mode-tabs input:checked ~ label {
   background-color: var(--activeTabColor);
   color: white;
   font-weight: 700;
@@ -96,6 +97,7 @@ input[name="display-mode"] {
   padding: 0.5rem 0.5rem;
   gap: 1rem;
   border-radius: 25px;
+  width: -moz-fit-content;
   width: fit-content;
   margin: 1.5rem auto 0 auto;
 }
@@ -110,6 +112,7 @@ input[name="display-mode"] {
   margin: 0px;
   text-transform: uppercase;
   font-weight: 400;
+  font-size: 0.9em;
 }
 
 button#pages-nav-first {
@@ -205,20 +208,42 @@ button#pages-nav-goto {
   font-style: italic;
 }
 
-#filter-form,
-#search-form {
-  background-color: black;
-  color: white;
-  padding: 1rem 2rem;
-  margin-bottom: 1rem;
-}
-
 #search-form {
   display: flex;
   justify-content: space-between;
   align-items: center;
   align-items: center;
   flex-wrap: nowrap;
+  background-color: black;
+  color: white;
+  padding: 1rem 2rem;
+  margin-bottom: 1rem;
+}
+
+#filter-form {
+  background-color: black;
+  color: white;
+  padding: 0;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+#filter-form h2 {
+  margin: 0;
+  padding: 0.3rem 2rem;
+  background-color: rgb(40, 40, 40);
+  text-align: center;
+}
+
+#filter-hide {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+#filter-hide.hidden {
+  transform: rotate(180deg);
 }
 
 #search-form.hide,
@@ -240,7 +265,12 @@ button#pages-nav-goto {
 #search-genre {
   column-count: 7;
   column-gap: 2rem;
-  margin-bottom: 1rem;
+  margin: 0.5rem 2rem 1rem 2rem;
+  transform-origin: top center;
+}
+
+#search-genre.hide {
+  display: none;
 }
 
 #search-genre input[type="checkbox"] {
@@ -251,15 +281,32 @@ button#pages-nav-goto {
 #search-genre-controls {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0.4rem 2rem;
+  background-color: rgb(30, 30, 30);
+  transform-origin: bottom center;
+}
+
+#search-genre-controls.hide {
+  display: none;
+}
+
+#search-genre-controls button {
+  font-size: 0.8em;
+  opacity: 0.8;
+}
+
+#search-genre-controls #filter-submit {
+  font-size: 1em;
+  opacity: 1;
 }
 
 #filter-method-picker {
   display: inline-flex;
   gap: 1.5rem;
   margin-left: 2rem;
-  background-color: rgb(20, 20, 20);
   padding: 0.5rem 1rem;
-  border-radius: 16px;
 }
 
 #filter-method-picker input[type="radio"] {
@@ -275,6 +322,10 @@ button#pages-nav-goto {
 
 .checkbox-wrapper {
   margin: 0.5rem;
+}
+
+.checkbox-wrapper:first-of-type {
+  margin-top: 0;
 }
 
 form > label {
@@ -407,6 +458,8 @@ form button:not(:disabled):hover {
   max-width: 70ch;
   max-height: 300px;
   overflow-y: auto;
+  padding: 0.5rem 1rem;
+  background-color: rgb(25, 25, 25);
 }
 
 #details-stats h3 {

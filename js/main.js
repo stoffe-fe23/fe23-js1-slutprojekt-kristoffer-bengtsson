@@ -11,15 +11,6 @@ import { displayPeopleList } from '../modules/person.js';
 import { displayMovieList } from '../modules/movie.js';
 import { fetchJSON, setAPIErrorDisplayFunction } from '../modules/api.js';
 
-
-/*
-  TODO: 
-  [_] Kunna flörpa upp/ner genre-filtret på topplistesidorna
-  [_] Styla sökformulär och genre-filter (olika knapp-stil på primär och extraknappar etc)
-  [_] Städa i CSS-filen, strukturera och gruppera regler. Dela upp i separata filer?
-  [_] Kolla felhantering, vad som händer vid diverse fail states etc
-*/
-
 // Innehåller info om senaste sökningen som användaren gjort
 const lastSearch = {
 	type: '',
@@ -32,9 +23,16 @@ const lastSearch = {
 // Animation för snurrande upptagen-indikator
 let busyAnimation;
 
-
 // Sätt funktion som skall användas för att visa API/fetch-fel för användaren
 setAPIErrorDisplayFunction(displayErrorMessage);
+
+
+/*
+  TODO: 
+  [_] Städa i CSS-filen, strukturera och gruppera regler. Dela upp i separata filer?
+  [_] Kolla felhantering, vad som händer vid diverse fail states etc
+  [_] Lusläs koden så inget gammalt skröfs ligger kvar
+*/
 
 
 /*****************************************************************************************************
@@ -47,11 +45,8 @@ setAPIErrorDisplayFunction(displayErrorMessage);
 document.querySelector("#display-mode-toprated").addEventListener("click", (event) => {
 	document.querySelector("#search-form").classList.add("hide");
 	document.querySelector("#filter-form").classList.remove("hide");
-
-	const onlySelectedGenres = true;
-
 	resetSearchResults();
-	loadMovieTopLists("vote_average.desc");
+	loadMovieTopLists("vote_average");
 });
 
 
@@ -60,11 +55,8 @@ document.querySelector("#display-mode-toprated").addEventListener("click", (even
 document.querySelector("#display-mode-popular").addEventListener("click", (event) => {
 	document.querySelector("#search-form").classList.add("hide");
 	document.querySelector("#filter-form").classList.remove("hide");
-
-	const onlySelectedGenres = true;
-
 	resetSearchResults();
-	loadMovieTopLists("popularity.desc");
+	loadMovieTopLists("popularity");
 });
 
 
@@ -85,17 +77,15 @@ document.querySelector("#display-mode-search").addEventListener("click", (event)
 document.querySelector("#search-form").addEventListener("submit", (event) => {
 	event.preventDefault();
 
-	const searchType = document.querySelector("#search-type");
-	const searchInput = document.querySelector("#search-input");
-	const inputText = searchInput.value.trim();
+	const searchType = document.querySelector("#search-type").value;
+	const inputText = document.querySelector("#search-input").value.trim();
 
 	resetSearchResults();
-
 	if (inputText.length > 0) {
-		findMovieOrPerson(searchType.value, inputText);
+		findMovieOrPerson(searchType, inputText);
 	}
 	else {
-		displayErrorMessage(`Please enter the name of a ${searchType.value} to search for.`);
+		displayErrorMessage(`Please enter the name of a ${searchType} to search for.`);
 	}
 });
 
@@ -110,11 +100,18 @@ document.querySelector("#search-type").addEventListener("change", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+// FOCUS: Markera ev. befintlig text i sökfältet när det får fokus
+document.querySelector("#search-input").addEventListener("focus", (event) => {
+	event.target.select();
+});
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 // SUBMIT: Filtrera visad topplista utifrån valda genres
 document.querySelector("#filter-form").addEventListener("submit", (event) => {
 	event.preventDefault();
 
-	// Markera/avmarkera all kryssturor
+	// Markera/avmarkera alla kryssrutor
 	if ((event.submitter.id == "filter-deselect-all") || (event.submitter.id == "filter-select-all")) {
 		const checkedBoxes = event.target.querySelectorAll(`input[type="checkbox"]`);
 		for (const checkedBox of checkedBoxes) {
@@ -124,13 +121,12 @@ document.querySelector("#filter-form").addEventListener("submit", (event) => {
 	// Uppdatera visning av topplista med valt filter
 	else {
 		const currentTab = document.querySelector(`input[name="display-mode"]:checked`).value;
+		resetSearchResults();
 		if (currentTab == "toprated") {
-			resetSearchResults();
-			loadMovieTopLists("vote_average.desc");
+			loadMovieTopLists("vote_average");
 		}
 		else if (currentTab == "popular") {
-			resetSearchResults();
-			loadMovieTopLists("popularity.desc");
+			loadMovieTopLists("popularity");
 		}
 	}
 });
@@ -141,27 +137,28 @@ document.querySelector("#filter-form").addEventListener("submit", (event) => {
 document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 	event.preventDefault();
 	event.submitter.blur();
-	// Föregående sida-knappen
+
+	// Föregående sida
 	if (event.submitter.id == "pages-nav-prev") {
 		if (lastSearch.page > 1) {
 			findSearchResultPage(lastSearch.page - 1);
 		}
 	}
-	// Nästa sida-knappen
+	// Nästa sida
 	else if (event.submitter.id == "pages-nav-next") {
 		if (lastSearch.page < lastSearch.pageMax) {
 			findSearchResultPage(lastSearch.page + 1);
 		}
 	}
-	// Första sidan-knappen
+	// Första sidan
 	else if (event.submitter.id == "pages-nav-first") {
 		findSearchResultPage(1);
 	}
-	// Sista sidan-knappen
+	// Sista sidan
 	else if (event.submitter.id == "pages-nav-last") {
 		findSearchResultPage(lastSearch.pageMax);
 	}
-	// Ange sida-knappen
+	// Ange sidnummer
 	else if (event.submitter.id == "pages-nav-goto") {
 		const pageInput = document.querySelector("#pages-goto-page");
 		pageInput.setAttribute("max", lastSearch.pageMax);
@@ -200,6 +197,23 @@ document.querySelector("#details-dialog").addEventListener("keydown", (event) =>
 });
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// CLICK: Knapp för att dölja eller visa genre-filtret för topplistorna
+document.querySelector("#filter-hide").addEventListener("click", (event) => {
+	if (event.currentTarget.classList.contains("hidden")) {
+		event.currentTarget.classList.remove("hidden");
+		event.currentTarget.title = "Hide genre filter";
+		showGenreFilter(true);
+	}
+	else {
+		event.currentTarget.classList.add("hidden");
+		event.currentTarget.title = "Show genre filter";
+		showGenreFilter(false);
+	}
+	event.currentTarget.alt = event.currentTarget.title;
+});
+
+
 
 /*****************************************************************************************************
  * FUNKTIONER
@@ -209,8 +223,9 @@ document.querySelector("#details-dialog").addEventListener("keydown", (event) =>
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Hämta Top Rated eller Popular movies topplista från API
 function loadMovieTopLists(listType, showResultPage = 1) {
+	// Se: https://developer.themoviedb.org/reference/discover-movie
 	const requestURL = new URL("https://api.themoviedb.org/3/discover/movie");
-	const showGenres = getSelectedGenres();
+	const showGenres = getFilterSelectedGenres();
 
 	// Rensa sparad data om senaste sökning och dölj sidnav-raden om den är synlig
 	lastSearch.type = '';
@@ -221,9 +236,10 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 
 	if (showGenres.selected.length > 0) {
 		setIsBusy(true);
-		requestURL.searchParams.append("sort_by", listType);
+		requestURL.searchParams.append("sort_by", `${listType}.desc`);
 		requestURL.searchParams.append("page", showResultPage);
 		requestURL.searchParams.append("vote_count.gte", "200");
+		requestURL.searchParams.append("include_adult", "false");
 		requestURL.searchParams.append("with_genres", showGenres.selected.join("|"));
 
 		if ((showGenres.excluded.length > 0) && showGenres.onlyShowSelected) {
@@ -238,7 +254,7 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa topp-10 lista över filmer
+// Visa topp-10 lista över topprankade eller populära filmer
 function showMovieToplist(movies) {
 	const resultsBox = document.querySelector("#results");
 	displayMovieList(movies, resultsBox, 10);
@@ -249,8 +265,11 @@ function showMovieToplist(movies) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utför sökning på en film eller person
 function findMovieOrPerson(searchType, searchInput, searchPage = 0) {
+	// Se: https://developer.themoviedb.org/reference/search-movie
+	//     https://developer.themoviedb.org/reference/search-person
 	const requestURL = new URL(`https://api.themoviedb.org/3/search/${searchType}`);
 	requestURL.searchParams.append("query", searchInput);
+	requestURL.searchParams.append("include_adult", "false");
 	if (searchPage > 0) {
 		requestURL.searchParams.append("page", searchPage);
 	}
@@ -280,7 +299,6 @@ function findSearchResultPage(page) {
 // Visa resultat av sökning på film eller person 
 function showSearchResults(searchResults) {
 	displayPageNav(searchResults.page, searchResults.total_pages);
-	setIsBusy(false);
 
 	if (Array.isArray(searchResults.results) && (searchResults.results.length > 0)) {
 		const resultsBox = document.querySelector("#results");
@@ -302,11 +320,12 @@ function showSearchResults(searchResults) {
 	else {
 		displayErrorMessage("There was no match for your search. Try searching for something else?");
 	}
+	setIsBusy(false);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa sid-navigering vid sökresultat som sträcker sig över flera sidor (20 per sida)
+// Visa sid-navigering vid sökresultat som sträcker sig över flera sidor (20 resultat visas per sida)
 function displayPageNav(currentPage, totalPages) {
 	const pagesNav = document.querySelector("#pages-nav");
 
@@ -328,8 +347,8 @@ function displayPageNav(currentPage, totalPages) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Hämta listor på valda och icke-valda genres i topplistor-filtret
-function getSelectedGenres() {
+// Returnera listor på valda och icke-valda genres i topplistor-filtret
+function getFilterSelectedGenres() {
 	const genreBoxes = document.querySelectorAll(`#search-genre input[name="search-genre"]`);
 	const filterType = document.querySelector(`#search-genre-controls input[name="filter-method"]:checked`).value;
 	const selectedGenres = [];
@@ -353,19 +372,19 @@ function getSelectedGenres() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Visa felmeddelande för användaren 
 function displayErrorMessage(errorText) {
+	const errorBox = document.querySelector("#errors");
 	if (errorText.length > 0) {
-		const errorBox = document.querySelector("#errors");
 		const errorMessage = document.createElement("div");
 		errorMessage.innerText = errorText;
 		errorBox.appendChild(errorMessage);
-		errorBox.classList.add("show");
 	}
+	errorBox.classList.add("show");
 	setIsBusy(false);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Nollställ sökformulär och visade resultat
+// Nollställ sökformulär visade resultat
 function resetSearchResults() {
 	const errorBox = document.querySelector("#errors");
 	errorBox.classList.remove("show");
@@ -377,12 +396,11 @@ function resetSearchResults() {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa användaren summering av hur många matchningar deras sökning gav.
+// Visa sammanställning av hur många matchningar senaste sökningen gav och vad som visas.
 function displaySearchSummary(currentCount, totalCount) {
 	const searchSummaryBox = document.querySelector("#search-form-summary");
-	const searchType = document.querySelector("#search-type option:checked").innerText.toLowerCase();
 
-	// Nollställ och göm summering-rutan.
+	// Nollställ och göm sammanställning-rutan istället.
 	if (currentCount === false) {
 		searchSummaryBox.classList.remove("show");
 		searchSummaryBox.innerHTML = "";
@@ -395,22 +413,21 @@ function displaySearchSummary(currentCount, totalCount) {
 	currentCount = (currentCount === undefined) || isNaN(currentCount) ? 0 : currentCount;
 	totalCount = (totalCount === undefined) || isNaN(totalCount) ? 0 : totalCount;
 	if ((currentCount == 0) || (totalCount == 0)) {
-		searchSummaryBox.innerText = `No ${searchType} matched your search.`;
+		searchSummaryBox.innerText = `No ${lastSearch.type} matched your search for "${lastSearch.query}".`;
 	}
 	else if (totalCount > currentCount) {
 		let intervalStart = (lastSearch.page * lastSearch.perPage) - (lastSearch.perPage - 1)
 		let intervalEnd = lastSearch.page * lastSearch.perPage;
 		intervalEnd = (intervalEnd > totalCount ? totalCount : intervalEnd);
 		if (intervalStart == intervalEnd) {
-			searchSummaryBox.innerText = `${totalCount} ${searchType}${totalCount == 1 ? "" : "s"} found, showing last one.`;
+			searchSummaryBox.innerText = `${totalCount} ${lastSearch.type}${totalCount == 1 ? "" : "s"} found matching "${lastSearch.query}", showing last one.`;
 		}
 		else {
-			searchSummaryBox.innerText = `${totalCount} ${searchType}${totalCount == 1 ? "" : "s"} found, showing ${intervalStart}-${intervalEnd}.`;
+			searchSummaryBox.innerText = `${totalCount} ${lastSearch.type}${totalCount == 1 ? "" : "s"} found matching "${lastSearch.query}", showing ${intervalStart}-${intervalEnd}.`;
 		}
-
 	}
 	else {
-		searchSummaryBox.innerText = `${currentCount} ${searchType}${currentCount == 1 ? "" : "s"} found.`;
+		searchSummaryBox.innerText = `${currentCount} ${lastSearch.type}${currentCount == 1 ? "" : "s"} found matching "${lastSearch.query}".`;
 	}
 }
 
@@ -453,3 +470,62 @@ function setIsBusy(isBusy) {
 	}
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Fäll upp/ner genre-filtet på topplista-sidorna
+function showGenreFilter(displayFilter) {
+	const genrePicker = document.querySelector("#search-genre");
+	const formControls = document.querySelector("#search-genre-controls");
+
+	if (displayFilter) {
+		genrePicker.classList.remove("hide");
+		anime({
+			targets: "#search-genre",
+			duration: 500,
+			easing: 'linear', 
+			autoplay: true,
+			scaleY: [
+				{value: '0%', duration: 0},
+				{value: '100%'},
+			],
+		}).finished.then(() => {
+			formControls.classList.remove("hide");
+			anime({
+				targets: "#search-genre-controls",
+				duration: 350,
+				easing: 'linear', 
+				autoplay: true,
+				scaleY: [
+					{value: '0%', duration: 0},
+					{value: '100%'},
+				],
+			});
+		});
+	}
+	else {
+		anime({
+			targets: "#search-genre-controls",
+			duration: 350,
+			easing: 'linear', 
+			autoplay: true,
+			scaleY: [
+				{value: '100%', duration: 0},
+				{value: '0%'},
+			],
+		}).finished.then(() => {
+			formControls.classList.add("hide");
+			anime({
+				targets: "#search-genre",
+				duration: 500,
+				easing: 'linear', 
+				autoplay: true,
+				scaleY: [
+					{value: '100%', duration: 0},
+					{value: '0%'},
+				],
+			}).finished.then(() => {
+				genrePicker.classList.add("hide");				
+			});
+		});
+	}
+}

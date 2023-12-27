@@ -2,7 +2,7 @@
     Slutprojekt (The Movie Database API) - FE23 Javascript 1
     Kristoffer Bengtsson
 
-	Generella verktygsfunktioner för att skapa DOM-element.
+	Gemensamma verktygsfunktioner för att skapa DOM-element för visning av film/person-info.
 */
 
 import anime from '../lib/anime.es.js';
@@ -37,7 +37,6 @@ export function createTextField(title, text, cssClass = '', allowHTML = false) {
 	else {
 		textField.appendChild(document.createTextNode(getIsValidText(text) ? text : " - "));
 	}
-	
 	return textField;
 }
 
@@ -55,10 +54,10 @@ export function createFieldTitle(text, type = "h3", cssClass = '') {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera en onumrerad lista med en rubrik
-export function createListField(title, listItems, cssClass = '') {
+// Returnera en HTML-lista med en rubrik
+export function createListField(title, listItems, cssClass = '', listType = 'ul') {
 	const listWrapper = document.createElement("div");
-	const listElement = document.createElement("ul");
+	const listElement = document.createElement(listType);
 	if (cssClass.length > 0 ) {
 		listWrapper.classList.add(cssClass);
 	}
@@ -74,7 +73,7 @@ export function createListField(title, listItems, cssClass = '') {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Lägg till ett element i angivet UL/OL-element
+// Lägg till en punkt i angiven HTML-lista
 export function addListOption(listElement, text, url) {
 	const listItem = document.createElement("li");
 	if (url !== undefined) {
@@ -93,39 +92,29 @@ export function addListOption(listElement, text, url) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett option element för användning i select eller datalist-element
-export function createDataOption(text, value) {
-	const optionElem = document.createElement("option");
-	optionElem.value = value;
-	optionElem.innerText = text;
-	return optionElem;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 // Returnera ett grupperat checkbox-element 
 export function createCheckboxOption(text, value, groupName) {
-	const optionWrapper = document.createElement("div");
-	const optionElem = document.createElement("input");
-	const optionLabel = document.createElement("label");
+	const checkboxWrapper = document.createElement("div");
+	const checkboxElem = document.createElement("input");
+	const checkboxLabel = document.createElement("label");
 	
-	optionElem.type = "checkbox";
-	optionElem.id = `genre-${value}`; 
-	optionElem.value = value;
-	optionElem.checked = true;
-	optionElem.name = groupName;
+	checkboxElem.type = "checkbox";
+	checkboxElem.id = `genre-${value}`; 
+	checkboxElem.value = value;
+	checkboxElem.checked = true;
+	checkboxElem.name = groupName;
 	
-	optionLabel.setAttribute("for", optionElem.id);	
-	optionLabel.innerText = text;
+	checkboxLabel.setAttribute("for", checkboxElem.id);	
+	checkboxLabel.innerText = text;
 
-	optionWrapper.classList.add("checkbox-wrapper");
-	optionWrapper.append(optionElem, optionLabel);
-	return optionWrapper;
+	checkboxWrapper.classList.add("checkbox-wrapper");
+	checkboxWrapper.append(checkboxElem, checkboxLabel);
+	return checkboxWrapper;
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett SVG-bildelement baserat på "points-image" template (i HTML) för visning av betygspoäng
+// Returnera ett SVG-bildelement baserat på "points-image" template (i HTML-filen) för visning av betygspoäng
 export function createMovieScorePointElement(isScored = false) {
     const newSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const newUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
@@ -233,6 +222,27 @@ export function animateFadeInScoreElements(elemClass) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Kontrollera om angiven parameter är en giltig textsträng av tillräcklig längd
-function getIsValidText(text, minLength = 0) {
+export function getIsValidText(text, minLength = 0) {
 	return (text !== undefined) && (text !== null) && (text.length > minLength);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Kontrollera om angiven parameter är ett giltigt nummer
+export function getIsValidNumber(number) {
+	return (number !== undefined) && (number !== null) && !isNaN(number);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Returnera en version av text nedklippt till angivet max antal tecken om den är längre. 
+export function getTruncatedText(truncText, maxLength) {
+	if (maxLength < truncText.length) {
+		let cutOffLength = truncText.lastIndexOf(" ", maxLength);
+		if (cutOffLength < 0) {
+			cutOffLength = maxLength;
+		}
+		truncText = truncText.slice(0, Math.min(maxLength, cutOffLength)) + "…";
+	}
+	return truncText;
 }

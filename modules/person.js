@@ -6,25 +6,37 @@
 */
 
 import {fetchJSON} from '../modules/api.js';
-import {createImageElement, createTextField, createFieldTitle, addListOption, createWrapperBox, createLinkField, animateFlipInElements} from '../modules/dom-utilities.js';
+import {
+	createImageElement, 
+	createTextField, 
+	createFieldTitle, 
+	addListOption, 
+	createWrapperBox, 
+	createLinkField, 
+	animateFlipInElements, 
+	getIsValidText, 
+	getIsValidNumber
+} from '../modules/dom-utilities.js';
 import {showMovieDetails} from '../modules/movie.js';
 
+
+// Bas-URL för porträtt-foton
 const imagesUrl = "https://image.tmdb.org/t/p/h632"; 
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Event-callback för att visa detaljerad info om en person vars ID är satt på "person-id" attributet
-// på elementet som triggar eventet. 
+// Event-callbackfunktion för att visa detaljerad info om en person vars ID är satt i "person-id" 
+// attributet på elementet som triggar eventet. 
 function showPersonDetails(event) {
 	event.preventDefault();
 
 	const personId = parseInt(event.currentTarget.getAttribute("person-id"));
-	if ((personId !== undefined) && (personId !== null) && !isNaN(personId)) {
+	if (getIsValidNumber(personId)) {
 		const requestURL = new URL(`https://api.themoviedb.org/3/person/${personId}`);
 		fetchJSON(requestURL, (person) => {
 			const detailsBox = document.querySelector("#details-dialog");
       		// Bygg absolut URL till porträtt-bilden
-			if ((person.profile_path !== undefined) && (person.profile_path !== null) && (person.profile_path.length > 5)) {
+			if (getIsValidText(person.profile_path, 5)) {
 				person.profile_path = imagesUrl + person.profile_path;
 			}
 			getPersonDetailsCard(person, detailsBox);
@@ -52,21 +64,20 @@ function getPersonDetailsCard(person, container) {
 		default: personGender = "Other"; break;
 	}
 
-	// Poster
+	// Photo
 	personPhoto.appendChild(createImageElement(person.profile_path, `Photo of ${person.name}`, '../images/no-photo.png'));
 
-	// Info
+	// Main info
 	personInfo.appendChild(createFieldTitle(person.name, "h2", "details-name"));
 	personInfo.appendChild(createTextField('', personBiography, "details-biography", true));
 	personInfo.appendChild(createTextField('Known for', person.known_for_department, "details-knownfor"));
 	personInfo.appendChild(createTextField('Birthplace', person.place_of_birth, "details-birthplace"));
 	personInfo.appendChild(createLinkField('Home page', 'Visit home page', person.homepage, 'details-homepage'));
 
-	// Stats
+	// Extra info
 	personStats.appendChild(createTextField('Date of birth', person.birthday, "details-birthday")); 
 	personStats.appendChild(createTextField('Date of death', person.deathday, "details-deathday"));
-	personStats.appendChild(createTextField('Gender', personGender, "details-gender"));
-	
+	personStats.appendChild(createTextField('Gender', personGender, "details-gender"));	
 	personStats.appendChild(createLinkField('', "IMDB", `https://www.imdb.com/name/${person.imdb_id}/`, "details-link"));
 	
 	return detailsBox;
@@ -74,13 +85,13 @@ function getPersonDetailsCard(person, container) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa översikt över en samling filmer i angivet container-element
+// Visa översikt över en samling personer i angivet container-element
 function displayPeopleList(people, container) {
 	container.innerHTML = "";
 	if (people.total_results > 0) {
 		for (const person of people.results) {
       		// Bygg absolut URL till porträtt-bilderna
-			if ((person.profile_path !== undefined) && (person.profile_path !== null) && (person.profile_path.length > 5)) {
+			if (getIsValidText(person.profile_path, 5)) {
 				person.profile_path = imagesUrl + person.profile_path;
 			}
 			container.appendChild(getPersonCard(person));
@@ -91,7 +102,7 @@ function displayPeopleList(people, container) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett DOM-element med ett info-kort om en person
+// Returnera ett DOM-element med info-kort om en person
 function getPersonCard(person) {
 	const personCard = createWrapperBox(undefined, '', ['card', 'card-person'], 'article');
 	const personName = createFieldTitle(person.name, "h2");
@@ -103,6 +114,7 @@ function getPersonCard(person) {
 		createWorkHistoryList("Known from", person.known_for)
 	);
 
+	// Gör foto och namn klickbara för att visa detaljerad info
 	personName.setAttribute("person-id", person.id);
 	personName.addEventListener("click", showPersonDetails); 
 	personPhoto.setAttribute("person-id", person.id);
@@ -124,7 +136,7 @@ function createWorkHistoryList(title, workHistory) {
 			const mediaName = (pastWork.media_type == "tv" ? pastWork.name : pastWork.title);
 			const pastWorkOption = addListOption(historyList, `<span class="type-${pastWork.media_type}">${pastWork.media_type}</span><a href="${mediaLink}" target="_blank">${mediaName}</a>`);  
 			
-			// Visa ruta med mer info om filmer om de klickas på i listan, för övriga typer länka till TMDB-sidan
+			// Visa ruta med mer info om filmer om de klickas på i listan (övriga typer länkar till TMDB-sidan)
 			if (pastWork.media_type == "movie") {
 				pastWorkOption.setAttribute("movie-id", pastWork.id);
 				pastWorkOption.addEventListener("click", showMovieDetails);

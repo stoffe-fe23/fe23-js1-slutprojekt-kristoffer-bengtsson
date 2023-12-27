@@ -5,7 +5,7 @@
 	Funktionalitet för att visa info om filmer från The Movie Database API.
 */
 
-import {fetchJSON, MovieAPIError} from '../modules/api.js';
+import {fetchJSON} from '../modules/api.js';
 import {
 	createImageElement, 
 	createTextField, 
@@ -16,16 +16,23 @@ import {
 	createLinkField, 
 	createWrapperBox, 
 	animateFlipInElements, 
-	animateFadeInScoreElements
+	animateFadeInScoreElements, 
+	getIsValidText, 
+	getIsValidNumber, 
+	getTruncatedText
 } from '../modules/dom-utilities.js';
 
 
+// Lista för översättning av genre-ID till genre-namn
 const movieGenreList = {};
+
+// Bas-URL för film-affischer
 const imagesUrl = "https://image.tmdb.org/t/p/w342"; 
 
 
 // Bygg genreväljare-rutorna och uppslagslista för genre-namn
-fetchMovieGenres( (genreList) => {
+// Se: https://developer.themoviedb.org/reference/genre-movie-list
+fetchJSON(`https://api.themoviedb.org/3/genre/movie/list`, (genreList) => {
 	const genreSelector = document.querySelector("#search-genre");
 	genreSelector.innerHTML = "";
 
@@ -36,7 +43,7 @@ fetchMovieGenres( (genreList) => {
 			movieGenreList[genre.id] = genre.name;
 		}
 	}
-});
+}, "Unable to load genre list. Movie filters may be unavailable.");
 
 
 /*****************************************************************************************************
@@ -45,19 +52,19 @@ fetchMovieGenres( (genreList) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Event-callback för att visa detaljerad info om en film vars ID är satt på "movie-id" attributet
-// på elementet som triggar eventet. 
+// Event-callbackfunktion för att visa detaljerad info om en film vars ID är satt på "movie-id"
+// attributet på elementet som triggar eventet. 
 function showMovieDetails(event) {
 	event.preventDefault();
 
 	const movieId = parseInt(event.currentTarget.getAttribute("movie-id"));
-	if ((movieId !== undefined) && (movieId !== null) && !isNaN(movieId)) {
+	if (getIsValidNumber(movieId)) {
 		const requestURL = new URL(`https://api.themoviedb.org/3/movie/${movieId}`);
 		fetchJSON(requestURL, (movie) => {
 			const detailsBox = document.querySelector("#details-dialog");
-
-			// Bygg absulut URL till affischbild
-			if ((movie.poster_path !== undefined) && (movie.poster_path !== null) && (movie.poster_path.length > 5)) {
+			
+			// Bygg absolut URL till affischbild
+			if (getIsValidText(movie.poster_path, 5)) {
 				movie.poster_path = imagesUrl + movie.poster_path;
 			}
 
@@ -66,15 +73,6 @@ function showMovieDetails(event) {
 			animateFadeInScoreElements('scored');
 		});
 	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Hämta lista över vilka genres som finns från API
-function fetchMovieGenres(callbackFunc) {
-    const requestURL = new URL(`https://api.themoviedb.org/3/genre/movie/list`);
-    requestURL.searchParams.append("language", "en");
-    fetchJSON(requestURL, callbackFunc, errorHandlerFetchGenres);
 }
 
 
@@ -92,7 +90,7 @@ function displayMovieList(movies, container, listItemLimit = 10) {
 			}
 
      		// Bygg absolut URL till affisch-bilderna
-			if ((movie.poster_path !== undefined) && (movie.poster_path !== null) && (movie.poster_path.length > 5)) {
+			if (getIsValidText(movie.poster_path, 5)) {
 				movie.poster_path = imagesUrl + movie.poster_path;
 			}
 			container.appendChild(getMovieCard(movie, listItemLimit == 0));
@@ -113,9 +111,10 @@ function getMovieCard(movie, showDescription = false) {
 	movieCard.appendChild(createTextField("Release date", movie.release_date));
 	movieCard.appendChild(createGenreList("Genre", movie.genre_ids));
 	if (showDescription) {
-		movieCard.appendChild(createTextField("", movie.overview, "movie-description"));
+		movieCard.appendChild(createTextField("", getTruncatedText(movie.overview, 200), "movie-description"));
 	}
 
+	// Gör titel och affisch klickbara för att visa detaljerad info
 	movieTitle.setAttribute("movie-id", movie.id);
 	movieTitle.addEventListener("click", showMovieDetails); 
  	movieImage.setAttribute("movie-id", movie.id);
@@ -129,6 +128,7 @@ function getMovieCard(movie, showDescription = false) {
 function getMovieDetailsCard(movie, container) {
 	container.innerHTML = "";
 
+	// Översättning av språk-koder till språknamn
 	const languages = new Intl.DisplayNames('en', {type: 'language'});
 
 	const detailsBox = createWrapperBox(container, "details");
@@ -160,7 +160,7 @@ function getMovieDetailsCard(movie, container) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Översätt genre-ID till text-namn och returnera lista (DOM-element)
+// Returnera genre-lista med genre-ID översatt till text-namn (DOM-element)
 function createGenreList(title, genres) {
 	const genreNames = [];
 	if ((genres !== undefined) && (genres !== null) && Array.isArray(genres) && (genres.length > 0)) {
@@ -208,16 +208,4 @@ function createMovieScoreDisplay(title, score) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Felhanterare för hämtning av lista över genres
-function errorHandlerFetchGenres(error) {
-    if (error instanceof MovieAPIError) {
-        console.log("Background data loading error", error.errorCode, error.message);
-    }
-    else {
-        console.log("Background data loading error", error);
-    }
-}
-
-
-export { getMovieCard, displayMovieList, getMovieDetailsCard, showMovieDetails, movieGenreList };
+export { getMovieCard, displayMovieList, getMovieDetailsCard, showMovieDetails };
