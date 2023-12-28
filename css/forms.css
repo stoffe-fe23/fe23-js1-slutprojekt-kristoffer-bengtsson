@@ -2,7 +2,7 @@
     Slutprojekt (The Movie Database API) - FE23 Javascript 1
     Kristoffer Bengtsson
 
-	  Stylesheet för formulär för sökning, filtrering och visning av sökresultat och topplistor.
+	  Stylesheet för formulär för sökning, filtrering och navigation av sökresultat och topplistor.
 */
 
 form > label {
@@ -218,4 +218,42 @@ button#pages-nav-last {
 
 button#pages-nav-goto {
   font-weight: 700;
+}
+
+/*****************************************************************************************************/
+/* Justeringar för smalare sidbredd */
+
+@media all and (max-width: 1300px) {
+  #filter-genre {
+    column-count: 6;
+  }
+}
+
+@media all and (max-width: 1140px) {
+  #filter-genre {
+    column-count: 5;
+  }
+}
+
+@media all and (max-width: 980px) {
+  #filter-genre {
+    column-count: 4;
+  }
+
+  #filter-genre-controls button {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media all and (max-width: 800px) {
+  #filter-genre {
+    column-count: 3;
+  }
+}
+
+@media all and (max-width: 650px) {
+  #filter-genre {
+    column-count: 2;
+  }
 }

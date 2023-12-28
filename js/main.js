@@ -86,10 +86,9 @@ document.querySelector("#search-form").addEventListener("submit", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// CHANGE: Flytta fokus till sökfältet och markera ev. innehåll när söktyp ändras
+// CHANGE: Flytta fokus till sökfältet när söktyp ändras
 document.querySelector("#search-type").addEventListener("change", (event) => {
 	const searchInput = document.querySelector("#search-input");
-	searchInput.select();
 	searchInput.focus();
 });
 
@@ -405,8 +404,9 @@ function displaySearchSummary(currentCount, totalCount) {
 		searchSummaryBox.classList.add("show");
 	}
 
-	currentCount = (currentCount === undefined) || isNaN(currentCount) ? 0 : currentCount;
-	totalCount = (totalCount === undefined) || isNaN(totalCount) ? 0 : totalCount;
+	currentCount = ((currentCount === undefined) || isNaN(currentCount) ? 0 : currentCount);
+	totalCount = ((totalCount === undefined) || isNaN(totalCount) ? 0 : totalCount);
+
 	if ((currentCount == 0) || (totalCount == 0)) {
 		searchSummaryBox.innerText = `No ${lastSearch.type} matched your search for "${lastSearch.query}".`;
 	}
@@ -453,16 +453,14 @@ function setIsBusy(isBusy) {
 	if (isBusy) {
 		busyBox.classList.add("show");
 		busyAnimation.play();
-		document.querySelector("#search-submit").disabled = true;
-		document.querySelector("#filter-submit").disabled = true;
 	}
 	else {
 		busyAnimation.restart();
 		busyAnimation.pause();
 		busyBox.classList.remove("show");
-		document.querySelector("#search-submit").disabled = false;
-		document.querySelector("#filter-submit").disabled = false;
 	}
+	document.querySelector("#search-submit").disabled = isBusy;
+	document.querySelector("#filter-submit").disabled = isBusy;
 }
 
 

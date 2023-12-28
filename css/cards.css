@@ -9,10 +9,13 @@
 /* Översikts-kort med info om en film eller person */
 
 .card {
+  flex-grow: 1;
+  flex-basis: 320px;
   position: relative;
   background-color: black;
   color: white;
   width: 320px;
+  max-width: 700px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
@@ -21,10 +24,8 @@
 }
 
 .card img {
-  max-width: 100%;
-}
-
-.card img {
+  width: 100%;
+  max-width: 342px;
   cursor: pointer;
 }
 
@@ -80,7 +81,7 @@
 }
 
 .workhistory-list li {
-  margin: 0.25rem 0;
+  margin: 0.25rem auto;
   padding: 0.75rem;
   background-color: rgba(255, 255, 255, 0.075);
   text-align: left;
@@ -88,6 +89,7 @@
   display: flex;
   flex-wrap: nowrap;
   align-items: flex-start;
+  max-width: 500px;
 }
 
 .workhistory-list li span:first-of-type {
@@ -130,7 +132,7 @@
 }
 
 #details-image img {
-  max-width: 300px;
+  max-width: 100%;
 }
 
 #details-info {
@@ -166,7 +168,7 @@
 .details-overview {
   font-size: 0.9em;
   max-width: 70ch;
-  max-height: 300px;
+  max-height: 240px;
   overflow-y: auto;
   padding: 0.5rem 1rem;
   background-color: rgb(25, 25, 25);
@@ -214,4 +216,21 @@
 .points.scored {
   opacity: 1;
   fill: gold;
+}
+
+/*****************************************************************************************************/
+/* Justeringar för smalare sidbredd */
+
+@media all and (max-width: 900px) {
+  #details {
+    grid-template-columns: 220px 1fr;
+    width: auto;
+  }
+}
+
+@media all and (max-width: 800px) {
+  #details-stats {
+    flex-direction: column;
+    justify-content: space-between;
+  }
 }
