@@ -47,7 +47,7 @@ function showPersonDetails(event) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera och infoga ett kort med detaljerad info om en person (DOM-element)
+// Returnera (och infoga) ett kort med detaljerad info om en person (DOM-element)
 function getPersonDetailsCard(person, container) {
 	container.innerHTML = "";
 
@@ -64,10 +64,10 @@ function getPersonDetailsCard(person, container) {
 		default: personGender = "Other"; break;
 	}
 
-	// Photo
+	// Foto
 	personPhoto.appendChild(createImageElement(person.profile_path, `Photo of ${person.name}`, '../images/no-photo.png'));
 
-	// Main info
+	// Huvudinfo-ruta
 	personInfo.appendChild(createFieldTitle(person.name, "h2", "details-name"));
 	personInfo.appendChild(createTextField('', personBiography, "details-biography", true));
 	personInfo.appendChild(createTextField('Known for', person.known_for_department, "details-knownfor"));

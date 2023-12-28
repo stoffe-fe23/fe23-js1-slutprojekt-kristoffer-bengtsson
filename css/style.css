@@ -81,6 +81,11 @@ input[name="display-mode"] {
   cursor: pointer;
 }
 
+#display-mode-tabs label img {
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
 #display-mode-tabs input:checked ~ label {
   background-color: var(--activeTabColor);
   color: white;

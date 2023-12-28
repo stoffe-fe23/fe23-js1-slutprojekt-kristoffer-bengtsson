@@ -125,7 +125,7 @@ function getMovieDetailsCard(movie, container) {
 
 	const movieOverview = movie.overview.replaceAll("\n", "<br>").trim();
 
-	// Poster
+	// Affisch
 	moviePoster.appendChild(createImageElement(movie.poster_path, `Poster for the movie ${movie.title}`, '../images/no-poster.png'));
 
 	// Info
@@ -136,7 +136,7 @@ function getMovieDetailsCard(movie, container) {
 	movieInfo.appendChild(createTextField('Play time', `${movie.runtime} minutes`, "details-runtime"));
 	movieInfo.appendChild(createMovieScoreDisplay('User score', movie.vote_average));
 
-	// Stats
+	// Extra-stats
 	movieStats.appendChild(createTextField('Original language', languages.of(movie.original_language), "details-language")); 
 	movieStats.appendChild(createTextField('Release date', movie.release_date, "details-release"));
 	movieStats.appendChild(createTextField('Status', movie.status, "details-status"));
@@ -179,7 +179,7 @@ function createGenreList(title, genres) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Returnera grafisk representation av betygspoäng [1-10] (DOM-element)
 function createMovieScoreDisplay(title, score) {
-	// Avrunda betygspoäng till heltal mellan 1-10
+	// Avrunda betygspoäng till heltal mellan 1-10 och skapa motsv. antal guldstjärnor
 	const scoreRounded = Math.max( Math.min( Math.round(score), 10), 1);
 	const scoreBox = document.createElement("div");
 	const scoreValueBox = document.createElement("span");
@@ -199,6 +199,7 @@ function createMovieScoreDisplay(title, score) {
 // Hämta genre-data från API och bygg uppslagslista och filter-kryssrutor
 // Se: https://developer.themoviedb.org/reference/genre-movie-list
 function fetchGenreData() {
+	// Generellt felmeddelande att visa om något inte fungerar
 	const errorMessage = "Unable to load genre list. Movie filters may be unavailable.";
 
 	fetchJSON('https://api.themoviedb.org/3/genre/movie/list', (genreList) => {
