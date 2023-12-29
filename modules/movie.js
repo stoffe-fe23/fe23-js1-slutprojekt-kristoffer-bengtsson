@@ -12,7 +12,7 @@ import {
 	createFieldTitle, 
 	createCheckboxOption, 
 	createListField, 
-	createMovieScorePointElement, 
+	createRatingScorePointElement, 
 	createLinkField, 
 	createWrapperBox, 
 	animateFlipInElements, 
@@ -44,8 +44,8 @@ fetchGenreData();
 function displayMovieList(movies, container, displayLimit = 0, includeDescription = false) {
 	container.innerHTML = "";
 	if ((movies.total_results > 0) && (movies.results.length > 0)) {
-		const topMovies = ( displayLimit > 0 ? movies.results.slice(0, displayLimit) : movies.results);
-		for (const movie of topMovies) {
+		movies.results = ( displayLimit > 0 ? movies.results.slice(0, displayLimit) : movies.results);
+		for (const movie of movies.results) {
 			if (getIsValidText(movie.poster_path, 5)) {
 				movie.poster_path = imagesUrl + movie.poster_path;
 			}
@@ -176,7 +176,6 @@ function showMediaDetails(event) {
 		fetchJSON(requestURL, (result) => {
 			const detailsBox = document.querySelector("#details-dialog");
 			
-			// Bygg absolut URL till affischbild
 			if (getIsValidText(result.poster_path, 5)) {
 				result.poster_path = imagesUrl + result.poster_path;
 			}
@@ -195,7 +194,7 @@ function showMediaDetails(event) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera genre-lista med genre-ID översatt till text-namn (DOM-element)
+// Returnera HTML-lista över genres (DOM-element)
 function createGenreList(title, genres) {
 	const genreNames = [];
 	if ((genres !== undefined) && (genres !== null) && Array.isArray(genres) && (genres.length > 0)) {
@@ -225,7 +224,7 @@ function createGenreList(title, genres) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera grafisk representation av betygspoäng [0-10] (DOM-element)
+// Returnera grafisk representation av betygspoäng (DOM-element)
 function createRatingScoreDisplay(title, score) {
 	// Avrunda betygspoäng till heltal mellan 0-10 och skapa motsv. antal guldstjärnor
 	const scoreRounded = Math.max( Math.min( Math.round(score), 10), 0);
@@ -236,7 +235,7 @@ function createRatingScoreDisplay(title, score) {
 		scoreBox.appendChild(createFieldTitle(title));
 	}
     for (let i = 1; i <= 10; i++) {
-		scoreValueBox.appendChild(createMovieScorePointElement(scoreRounded >= i));
+		scoreValueBox.appendChild(createRatingScorePointElement(scoreRounded >= i));
     }
 	scoreBox.appendChild(scoreValueBox);
 	return scoreBox;

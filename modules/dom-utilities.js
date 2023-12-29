@@ -110,7 +110,7 @@ export function createCheckboxOption(text, value, groupName) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Returnera ett SVG-bildelement baserat på "points-image" template (i HTML-filen) för visning av betygspoäng
-export function createMovieScorePointElement(isScored = false) {
+export function createRatingScorePointElement(isScored = false) {
     const newSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const newUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     newSVG.classList.add("points");
