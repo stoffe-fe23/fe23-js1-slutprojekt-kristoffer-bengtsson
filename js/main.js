@@ -13,6 +13,7 @@ import anime from '../lib/anime.es.js';
 import { displayPeopleList } from '../modules/person.js';
 import { displayMovieList } from '../modules/movie.js';
 import { fetchJSON, setAPIErrorDisplayFunction } from '../modules/api.js';
+import { getIsValidNumber } from '../modules/dom-utilities.js';
 
 // Innehåller info om senaste sökningen som användaren gjort
 const lastSearch = {
@@ -167,7 +168,7 @@ document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 // SUBMIT: Dialogruta-formulär för att ange en specifik sida att gå till i sökresultatet
 document.querySelector("#pages-goto-form").addEventListener("submit", (event) => {
 	const pageInput = document.querySelector("#pages-goto-page").value;
-	if ((pageInput !== undefined) && !isNaN(pageInput) && (pageInput.length > 0) && (pageInput >= 1) && (pageInput <= lastSearch.pageMax)) {
+	if ((pageInput.length > 0) && getIsValidNumber(pageInput) && (pageInput >= 1) && (pageInput <= lastSearch.pageMax)) {
 		findSearchResultPage(pageInput);
 	}
 	else {
@@ -216,9 +217,8 @@ document.querySelector("#filter-hide").addEventListener("click", (event) => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Hämta och visa Top Rated eller Popular movies topplista från API
+// Se: https://developer.themoviedb.org/reference/discover-movie
 function loadMovieTopLists(listType, showResultPage = 1) {
-	// Se: https://developer.themoviedb.org/reference/discover-movie
-	const requestURL = new URL("https://api.themoviedb.org/3/discover/movie");
 	const showGenres = getFilterSelectedGenres();
 
 	// Rensa sparad data om senaste sökning och dölj sidnav-raden om den är synlig
@@ -229,16 +229,17 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 	displayPageNav(0, 0);
 
 	if (showGenres.selected.length > 0) {
-		setIsBusy(true);
+		const requestURL = new URL("https://api.themoviedb.org/3/discover/movie");
 		requestURL.searchParams.append("sort_by", `${listType}.desc`);
 		requestURL.searchParams.append("page", showResultPage);
 		requestURL.searchParams.append("vote_count.gte", "200");
 		requestURL.searchParams.append("include_adult", "false");
 		requestURL.searchParams.append("with_genres", showGenres.selected.join("|"));
-
 		if ((showGenres.excluded.length > 0) && showGenres.onlyShowSelected) {
 			requestURL.searchParams.append("without_genres", showGenres.excluded.join("|"));
 		}
+
+		setIsBusy(true);
 		fetchJSON(requestURL, (movies) => {
 			if (Array.isArray(movies.results) && (movies.results.length > 0)) {
 				displayMovieList(movies, document.querySelector("#results"), 10);
@@ -257,9 +258,9 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utför sökning på en film eller person
+// Se: https://developer.themoviedb.org/reference/search-movie
+//     https://developer.themoviedb.org/reference/search-person
 function findMovieOrPerson(searchType, searchInput, searchPage = 0) {
-	// Se: https://developer.themoviedb.org/reference/search-movie
-	//     https://developer.themoviedb.org/reference/search-person
 	const requestURL = new URL(`https://api.themoviedb.org/3/search/${searchType}`);
 	requestURL.searchParams.append("query", searchInput);
 	requestURL.searchParams.append("include_adult", "false");
@@ -322,8 +323,8 @@ function showSearchResults(searchResults) {
 function displayPageNav(currentPage, totalPages) {
 	const pagesNav = document.querySelector("#pages-nav");
 
-	lastSearch.page = ((currentPage === undefined) || isNaN(currentPage) ? 0 : currentPage);
-	lastSearch.pageMax = ((totalPages === undefined) || isNaN(totalPages) ? 0 : totalPages);
+	lastSearch.page = (!getIsValidNumber(currentPage) ? 0 : currentPage);
+	lastSearch.pageMax = (!getIsValidNumber(totalPages) ? 0 : totalPages);
 
 	if (lastSearch.pageMax > 1) {
 		pagesNav.querySelector("#pages-nav-goto").innerHTML = `Page ${lastSearch.page} / ${lastSearch.pageMax}`;
@@ -403,8 +404,8 @@ function displaySearchSummary(currentCount, totalCount) {
 		searchSummaryBox.classList.add("show");
 	}
 
-	currentCount = ((currentCount === undefined) || isNaN(currentCount) ? 0 : currentCount);
-	totalCount = ((totalCount === undefined) || isNaN(totalCount) ? 0 : totalCount);
+	currentCount = (!getIsValidNumber(currentCount) ? 0 : currentCount);
+	totalCount = (!getIsValidNumber(totalCount) ? 0 : totalCount);
 
 	if ((currentCount == 0) || (totalCount == 0)) {
 		searchSummaryBox.innerText = `No ${lastSearch.type} matched your search for "${lastSearch.query}".`;
@@ -413,12 +414,8 @@ function displaySearchSummary(currentCount, totalCount) {
 		let intervalStart = (lastSearch.page * lastSearch.perPage) - (lastSearch.perPage - 1)
 		let intervalEnd = lastSearch.page * lastSearch.perPage;
 		intervalEnd = (intervalEnd > totalCount ? totalCount : intervalEnd);
-		if (intervalStart == intervalEnd) {
-			searchSummaryBox.innerText = `${totalCount} ${lastSearch.type}${totalCount == 1 ? "" : "s"} found matching "${lastSearch.query}", showing last one.`;
-		}
-		else {
-			searchSummaryBox.innerText = `${totalCount} ${lastSearch.type}${totalCount == 1 ? "" : "s"} found matching "${lastSearch.query}", showing ${intervalStart}-${intervalEnd}.`;
-		}
+		searchSummaryBox.innerText = `${totalCount} ${lastSearch.type}${totalCount == 1 ? "" : "s"} found matching "${lastSearch.query}"`;
+		searchSummaryBox.innerText += (intervalStart == intervalEnd ? `, showing last one.` : `, showing ${intervalStart}-${intervalEnd}.`);
 	}
 	else {
 		searchSummaryBox.innerText = `${currentCount} ${lastSearch.type}${currentCount == 1 ? "" : "s"} found matching "${lastSearch.query}".`;

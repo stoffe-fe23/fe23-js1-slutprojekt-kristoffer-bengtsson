@@ -17,9 +17,7 @@ export function createImageElement(url, text, placeholderImage = '../images/no-p
 	const imageElement = document.createElement("img");
 	imageElement.alt = (getIsValidText(text) ? text : "No description");
 	imageElement.src = (getIsValidText(url, 10) ? url : placeholderImage);
-	if (cssClass.length > 0 ) {
-		imageElement.classList.add(cssClass);
-	}
+	addClassToElement(imageElement, cssClass);
 	return imageElement;
 }
 
@@ -28,9 +26,7 @@ export function createImageElement(url, text, placeholderImage = '../images/no-p
 // Returnera ett text-element med en rubrik
 export function createTextField(title, text, cssClass = '', allowHTML = false) {
 	const textField = document.createElement("div");
-	if (cssClass.length > 0 ) {
-		textField.classList.add(cssClass);
-	}
+	addClassToElement(textField, cssClass);
     if (title.length > 0) {
         textField.appendChild(createFieldTitle(title));    
     }
@@ -49,9 +45,7 @@ export function createTextField(title, text, cssClass = '', allowHTML = false) {
 export function createFieldTitle(text, type = "h3", cssClass = '') {
 	const fieldTitle = document.createElement(type);
 	fieldTitle.innerText = ( getIsValidText(text) ? text : "Untitled" );
-	if (cssClass.length > 0 ) {
-		fieldTitle.classList.add(cssClass);
-	}
+	addClassToElement(fieldTitle, cssClass);
 	return fieldTitle;
 }
 
@@ -61,9 +55,7 @@ export function createFieldTitle(text, type = "h3", cssClass = '') {
 export function createListField(title, listItems, cssClass = '', listType = 'ul') {
 	const listWrapper = document.createElement("div");
 	const listElement = document.createElement(listType);
-	if (cssClass.length > 0 ) {
-		listWrapper.classList.add(cssClass);
-	}
+	addClassToElement(listWrapper, cssClass);
     if (title.length > 0) {
         listWrapper.appendChild(createFieldTitle(title));    
     }
@@ -136,14 +128,13 @@ export function createMovieScorePointElement(isScored = false) {
 export function createLinkField(title, text, url, cssClass = '') {
 	const linkField = document.createElement("div");
 	const linkElem = document.createElement("a");
-	if (cssClass.length > 0 ) {
-		linkField.classList.add(cssClass);
-	}
+	addClassToElement(linkField, cssClass);
+
     if (title.length > 0) {
         linkField.appendChild(createFieldTitle(title));    
     }
 
-	if (url !== null) {
+	if (getIsValidText(url, 4)) {
 		linkElem.target = "_blank";
 		linkElem.href = url;
 		linkElem.innerText = (getIsValidText(text) ? text : "Click here");
@@ -166,14 +157,7 @@ export function createWrapperBox(parentContainer, elementID, cssClass = '', elem
 	if ((elementID !== undefined) && (elementID.length > 0)) {
 		wrapperBox.id = elementID;
 	}
-	if (cssClass.length > 0) {
-		if (Array.isArray(cssClass)) {
-			wrapperBox.classList.add(...cssClass);
-		}
-		else {
-			wrapperBox.classList.add(cssClass);
-		}	
-	}
+	addClassToElement(wrapperBox, cssClass);
 	if (parentContainer !== undefined) {
 		parentContainer.appendChild(wrapperBox);
 	}
@@ -249,4 +233,18 @@ export function getTruncatedText(truncText, maxLength) {
 		truncText = truncText.slice(0, cutOffLength) + "…";
 	}
 	return truncText;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Lägg till klass(er) till ett element om classesToAdd är satt
+function addClassToElement(targetElement, classesToAdd) {
+	if (classesToAdd.length > 0) {
+		if (Array.isArray(classesToAdd)) {
+			targetElement.classList.add(...classesToAdd);
+		}
+		else if (getIsValidText(classesToAdd)) {
+			targetElement.classList.add(classesToAdd);
+		}	
+	}
 }
