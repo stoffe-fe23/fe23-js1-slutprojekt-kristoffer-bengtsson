@@ -39,23 +39,17 @@ fetchGenreData();
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa en samling av upp till listItemLimit film-kort. Visa alla och inkludera beskrivning om
-// listItemLimit är noll. 
-function displayMovieList(movies, container, listItemLimit = 10) {
+// Visa en samling av upp till displayLimit film-kort (0 = alla). Inkludera kort beskrivning om 
+// includeDescription är satt. 
+function displayMovieList(movies, container, displayLimit = 0, includeDescription = false) {
 	container.innerHTML = "";
-
-	if (movies.total_results > 0) {
-		let displayCount = 0;
-		for (const movie of movies.results) {
-			if ((++displayCount > listItemLimit) && (listItemLimit > 0)) {
-				break;
-			}
-
-     		// Bygg absolut URL till affisch-bilderna
+	if ((movies.total_results > 0) && (movies.results.length > 0)) {
+		const topMovies = ( displayLimit > 0 ? movies.results.slice(0, displayLimit) : movies.results);
+		for (const movie of topMovies) {
 			if (getIsValidText(movie.poster_path, 5)) {
 				movie.poster_path = imagesUrl + movie.poster_path;
 			}
-			container.appendChild(getMovieCard(movie, listItemLimit == 0));
+			container.appendChild(getMovieCard(movie, includeDescription));
 		}
 		animateFlipInElements('card');
 	}

@@ -215,7 +215,7 @@ document.querySelector("#filter-hide").addEventListener("click", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Hämta Top Rated eller Popular movies topplista från API
+// Hämta och visa Top Rated eller Popular movies topplista från API
 function loadMovieTopLists(listType, showResultPage = 1) {
 	// Se: https://developer.themoviedb.org/reference/discover-movie
 	const requestURL = new URL("https://api.themoviedb.org/3/discover/movie");
@@ -239,20 +239,19 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 		if ((showGenres.excluded.length > 0) && showGenres.onlyShowSelected) {
 			requestURL.searchParams.append("without_genres", showGenres.excluded.join("|"));
 		}
-		fetchJSON(requestURL, showMovieToplist);
+		fetchJSON(requestURL, (movies) => {
+			if (Array.isArray(movies.results) && (movies.results.length > 0)) {
+				displayMovieList(movies, document.querySelector("#results"), 10);
+			}
+			else {
+				displayErrorMessage("Top lists are currently unavailable. Try again later.");
+			}
+			setIsBusy(false);
+		});
 	}
 	else {
 		displayErrorMessage("Please select at least one genre of movies to show.");
 	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa topp-10 lista över topprankade eller populära filmer
-function showMovieToplist(movies) {
-	const resultsBox = document.querySelector("#results");
-	displayMovieList(movies, resultsBox, 10);
-	setIsBusy(false);
 }
 
 
@@ -301,7 +300,7 @@ function showSearchResults(searchResults) {
 
 		// Title-fältet finns: det är en film
 		if (searchResults.results[0].title !== undefined) {
-			displayMovieList(searchResults, resultsBox, 0);
+			displayMovieList(searchResults, resultsBox, 0, true);
 		}
 		// Name-fältet finns: det är en person
 		else if (searchResults.results[0].name !== undefined) {

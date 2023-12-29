@@ -25,6 +25,7 @@ body {
   background-color: rgb(27, 43, 63);
   background: linear-gradient(to right top, rgb(27, 43, 63), rgb(60, 73, 92));
   min-width: 600px;
+  min-height: 100vh;
 }
 
 header {

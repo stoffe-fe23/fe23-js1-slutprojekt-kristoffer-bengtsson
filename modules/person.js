@@ -88,9 +88,8 @@ function getPersonDetailsCard(person, container) {
 // Visa översikt över en samling personer i angivet container-element
 function displayPeopleList(people, container) {
 	container.innerHTML = "";
-	if (people.total_results > 0) {
+	if ((people.total_results > 0) && (people.results.length > 0)) {
 		for (const person of people.results) {
-      		// Bygg absolut URL till porträtt-bilderna
 			if (getIsValidText(person.profile_path, 5)) {
 				person.profile_path = imagesUrl + person.profile_path;
 			}
