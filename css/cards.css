@@ -164,6 +164,7 @@
   margin-bottom: 1rem;
 }
 
+.details-overview-series,
 .details-biography,
 .details-overview {
   font-size: 0.9em;
@@ -172,6 +173,10 @@
   overflow-y: auto;
   padding: 0.5rem 1rem;
   background-color: rgb(25, 25, 25);
+}
+
+.details-overview-series {
+  max-height: 170px;
 }
 
 #details-stats h3 {
@@ -192,9 +197,27 @@
   font-size: 1.05em;
 }
 
-#details-info .genre-list ul {
+#details-info ul {
   margin: 0px;
   padding-left: 1.5rem;
+}
+
+#details.details-series #details-stats h3 {
+  display: block;
+  margin: 0;
+}
+
+#details.details-series .details-runtime h3,
+#details.details-series .details-episodes h3,
+#details.details-series .details-seasons h3 {
+  display: inline-block;
+}
+
+#details.details-series .details-runtime h3::after,
+#details.details-series .details-episodes h3::after,
+#details.details-series .details-seasons h3::after {
+  content: ":";
+  margin-right: 0.5rem;
 }
 
 /* Poäng-stjärnor för att visa användarbetyg för filmer */

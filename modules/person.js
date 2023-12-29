@@ -17,7 +17,7 @@ import {
 	getIsValidText, 
 	getIsValidNumber
 } from '../modules/dom-utilities.js';
-import {showMovieDetails} from '../modules/movie.js';
+import {showMediaDetails} from '../modules/movie.js';
 
 
 // Bas-URL för porträtt-foton
@@ -136,10 +136,11 @@ function createWorkHistoryList(title, workHistory) {
 			const mediaName = (pastWork.media_type == "tv" ? pastWork.name : pastWork.title);
 			const pastWorkOption = addListOption(historyList, `<span class="type-${pastWork.media_type}">${pastWork.media_type}</span><a href="${mediaLink}" target="_blank">${mediaName}</a>`);  
 			
-			// Visa ruta med mer info om filmer om de klickas på i listan (övriga typer länkar till TMDB-sidan)
-			if (pastWork.media_type == "movie") {
-				pastWorkOption.setAttribute("movie-id", pastWork.id);
-				pastWorkOption.addEventListener("click", showMovieDetails);
+			// Visa ruta med mer info om filmer och TV-serier om de klickas på i listan (övriga typer länkar till TMDB-sidan istället)
+			if ((pastWork.media_type == "movie") || (pastWork.media_type == "tv")) {
+				pastWorkOption.setAttribute("details-id", pastWork.id);
+				pastWorkOption.setAttribute("details-type", pastWork.media_type);
+				pastWorkOption.addEventListener("click", showMediaDetails);
 			}
 		}  
 	}
