@@ -13,7 +13,7 @@ import anime from '../lib/anime.es.js';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Returnera ett bild-element
-export function createImageElement(url, text, placeholderImage = '../images/no-poster.png', cssClass = '') {
+export function createImageElement(url, text, placeholderImage, cssClass = '') {
 	const imageElement = document.createElement("img");
 	imageElement.alt = (getIsValidText(text) ? text : "No description");
 	imageElement.src = (getIsValidText(url, 10) ? url : placeholderImage);
@@ -222,8 +222,7 @@ export function getIsValidNumber(number) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera en version av text nedklippt till högst angivet max antal tecken om den är längre 
-// (utan att klippa mitt i ord)
+// Returnera en sträng nedklippt till angivet max antal tecken (utan att klippa mitt i ord)
 export function getTruncatedText(truncText, maxLength) {
 	if (maxLength < truncText.length) {
 		let cutOffLength = Math.min(maxLength, truncText.lastIndexOf(" ", maxLength));

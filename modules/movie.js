@@ -10,7 +10,6 @@ import {
 	createImageElement, 
 	createTextField, 
 	createFieldTitle, 
-	createCheckboxOption, 
 	createListField, 
 	createRatingScorePointElement, 
 	createLinkField, 
@@ -28,9 +27,6 @@ const imagesUrl = "https://image.tmdb.org/t/p/w342";
 
 // Lista för översättning av genre-ID till genre-namn
 const movieGenreList = {};
-
-// Bygg genreväljare-rutorna och uppslagslista för genre-namn när sidan laddas.
-fetchGenreData();
 
 
 /*****************************************************************************************************
@@ -60,7 +56,7 @@ function displayMovieList(movies, container, displayLimit = 0, includeDescriptio
 // Returnera ett info-kort om en film (DOM-element)
 function getMovieCard(movie, showDescription = false) {
 	const movieCard = createWrapperBox(undefined, '', ['card', 'card-movie'], 'article');
-	const movieImage = createImageElement(movie.poster_path, `Movie poster for ${movie.title}`);
+	const movieImage = createImageElement(movie.poster_path, `Movie poster for ${movie.title}`, '../images/no-poster.png');
 	const movieTitle = createFieldTitle(movie.title, "h2");
 	movieCard.appendChild(movieImage);
 	movieCard.appendChild(movieTitle);
@@ -243,25 +239,22 @@ function createRatingScoreDisplay(title, score) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Hämta genre-data från API och bygg uppslagslista och filter-kryssrutor
+// Hämta genre-data från API och bygg uppslagslista. (Skicka ev. resultat till callbackFunc också)
 // Se: https://developer.themoviedb.org/reference/genre-movie-list
-function fetchGenreData() {
-	// Generellt felmeddelande att visa om något inte fungerar
-	const errorMessage = "Unable to load genre list. Movie filters may be unavailable.";
-
-	fetchJSON('https://api.themoviedb.org/3/genre/movie/list', (genreList) => {
-		const genreSelector = document.querySelector("#filter-genre");
-		genreSelector.innerHTML = "";
-
+function fetchGenreData(callbackFunc) {
+	const fetchResultPromise = fetchJSON('https://api.themoviedb.org/3/genre/movie/list', (genreList) => {
 		if ((genreList.genres !== undefined) && (genreList.genres !== null) && Array.isArray(genreList.genres) && (genreList.genres.length > 0)) {
 			genreList.genres.sort( (genreA, genreB) => genreA.name.localeCompare(genreB.name));
 			for (const genre of genreList.genres) {
-				genreSelector.appendChild(createCheckboxOption(genre.name, genre.id, "filter-genre"));
 				movieGenreList[genre.id] = genre.name;
 			}
 		}
-	}, errorMessage);
+	}, "Unable to load genre list. Movie filters may be unavailable.");
+
+	if (typeof callbackFunc == "function") {
+		fetchResultPromise.then(callbackFunc);
+	}
 }
 
 
-export { getMovieCard, displayMovieList, getMovieDetailsCard, showMediaDetails };
+export { getMovieCard, displayMovieList, getMovieDetailsCard, showMediaDetails, fetchGenreData };

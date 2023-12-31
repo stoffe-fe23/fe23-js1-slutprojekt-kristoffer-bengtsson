@@ -58,7 +58,7 @@ function errorHandlerAPI(error, errorMessageOverride) {
             case 503: displayErrorMessage("The Movie Database is currently unavailable. Try again later?"); break;
             default: displayErrorMessage("An error occurred when accessing The Movie Database. Try again?"); break;
         }
-        console.log("MovieAPI Error:", error.errorCode, error.message);
+        console.error("MovieAPI Error:", error.errorCode, error.message);
     }
     else {
         displayErrorMessage("An error occurred while fetching information from The Movie Database. Try again?");

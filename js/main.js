@@ -11,11 +11,11 @@
 
 import anime from '../lib/anime.es.js';
 import { displayPeopleList } from '../modules/person.js';
-import { displayMovieList } from '../modules/movie.js';
+import { displayMovieList, fetchGenreData } from '../modules/movie.js';
 import { fetchJSON, setAPIErrorDisplayFunction } from '../modules/api.js';
-import { getIsValidNumber } from '../modules/dom-utilities.js';
+import { getIsValidNumber, createCheckboxOption } from '../modules/dom-utilities.js';
 
-// Innehåller info om senaste sökningen som användaren gjort
+// GLOBAL: Innehåller info om senaste sökningen som användaren gjort.
 const lastSearch = {
 	type: '',
 	query: '',
@@ -24,11 +24,15 @@ const lastSearch = {
 	perPage: 20
 }
 
-// Animation för snurrande upptagen-indikator
+// GLOBAL: Animation för snurrande upptagen-indikator.
 let busyAnimation;
 
-// Sätt funktion som skall användas för att visa API/fetch-fel för användaren
+
+// Sätt funktion som skall användas för att visa API/fetch-fel för användaren.
 setAPIErrorDisplayFunction(displayErrorMessage);
+
+// Bygg genrefilter-rutorna och uppslagslista för genrenamn.
+fetchGenreData(buildGenreFilter);
 
 
 /*****************************************************************************************************
@@ -69,7 +73,7 @@ document.querySelector("#display-mode-search").addEventListener("click", (event)
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// SUBMIT: Sökformulär för film/person
+// Sökformulär för film/person
 document.querySelector("#search-form").addEventListener("submit", (event) => {
 	event.preventDefault();
 
@@ -87,7 +91,7 @@ document.querySelector("#search-form").addEventListener("submit", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// CHANGE: Flytta fokus till sökfältet när söktyp ändras
+// Flytta fokus till sökfältet när söktyp ändras
 document.querySelector("#search-type").addEventListener("change", (event) => {
 	const searchInput = document.querySelector("#search-input");
 	searchInput.focus();
@@ -95,14 +99,14 @@ document.querySelector("#search-type").addEventListener("change", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// FOCUS: Markera ev. befintlig text i sökfältet när det får fokus
+// Markera ev. befintlig text i sökfältet när det får fokus
 document.querySelector("#search-input").addEventListener("focus", (event) => {
 	event.target.select();
 });
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// SUBMIT: Filtrera visad topplista utifrån valda genres
+// Filtrera visad topplista utifrån valda genres
 document.querySelector("#filter-form").addEventListener("submit", (event) => {
 	event.preventDefault();
 
@@ -128,7 +132,7 @@ document.querySelector("#filter-form").addEventListener("submit", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// SUBMIT: Sidnavigering-formulär för sökresultat (vid stora sökresultat uppdelade på flera sidor)
+// Sidnavigering-formulär för sökresultat (vid stora sökresultat uppdelade på flera sidor)
 document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 	event.preventDefault();
 	event.submitter.blur();
@@ -165,7 +169,7 @@ document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// SUBMIT: Dialogruta-formulär för att ange en specifik sida att gå till i sökresultatet
+// Dialogruta-formulär för att ange en specifik sida att gå till i sökresultatet
 document.querySelector("#pages-goto-form").addEventListener("submit", (event) => {
 	const pageInput = document.querySelector("#pages-goto-page").value;
 	if ((pageInput.length > 0) && getIsValidNumber(pageInput) && (pageInput >= 1) && (pageInput <= lastSearch.pageMax)) {
@@ -178,7 +182,7 @@ document.querySelector("#pages-goto-form").addEventListener("submit", (event) =>
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Klicka utanför eller tryck på ESC-tangenten: Stäng Movie/Person-details dialogrutan
+// Klicka utanför rutan eller tryck på ESC-tangenten för att stänga Movie/TV/Person-details dialogrutan
 document.querySelector("#details-dialog").addEventListener("click", (event) => {
 	if (event.target.id == event.currentTarget.id) {
 		event.currentTarget.close();
@@ -193,7 +197,7 @@ document.querySelector("#details-dialog").addEventListener("keydown", (event) =>
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// CLICK: Knapp för att dölja eller visa genre-filtret för topplistorna
+// Kontroll för att dölja eller visa genre-filtret för topplistorna
 document.querySelector("#filter-hide").addEventListener("click", (event) => {
 	if (event.currentTarget.classList.contains("hidden")) {
 		event.currentTarget.classList.remove("hidden");
@@ -221,7 +225,7 @@ document.querySelector("#filter-hide").addEventListener("click", (event) => {
 function loadMovieTopLists(listType, showResultPage = 1) {
 	const showGenres = getFilterSelectedGenres();
 
-	// Rensa sparad data om senaste sökning och dölj sidnav-raden om den är synlig
+	// Rensa sparad data om senaste sökning och nollställ sidnav-raden
 	lastSearch.type = '';
 	lastSearch.query = '';
 	lastSearch.page = 0;
@@ -243,11 +247,11 @@ function loadMovieTopLists(listType, showResultPage = 1) {
 		fetchJSON(requestURL, (movies) => {
 			if (Array.isArray(movies.results) && (movies.results.length > 0)) {
 				displayMovieList(movies, document.querySelector("#results"), 10);
+				setIsBusy(false);
 			}
 			else {
 				displayErrorMessage("Top lists are currently unavailable. Try again later.");
 			}
-			setIsBusy(false);
 		});
 	}
 	else {
@@ -319,7 +323,7 @@ function showSearchResults(searchResults) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa sid-navigering vid sökresultat som sträcker sig över flera sidor (20 resultat visas per sida)
+// Visa sid-navigering vid sökresultat som sträcker sig över flera sidor (20 st visas per sida)
 function displayPageNav(currentPage, totalPages) {
 	const pagesNav = document.querySelector("#pages-nav");
 
@@ -328,10 +332,10 @@ function displayPageNav(currentPage, totalPages) {
 
 	if (lastSearch.pageMax > 1) {
 		pagesNav.querySelector("#pages-nav-goto").innerHTML = `Page ${lastSearch.page} / ${lastSearch.pageMax}`;
-		pagesNav.querySelector("#pages-nav-first").disabled = (currentPage == 1);
-		pagesNav.querySelector("#pages-nav-prev").disabled = !(currentPage > 1);
-		pagesNav.querySelector("#pages-nav-next").disabled = !(currentPage < totalPages);
-		pagesNav.querySelector("#pages-nav-last").disabled = (currentPage == lastSearch.pageMax);
+		pagesNav.querySelector("#pages-nav-first").disabled = (lastSearch.page == 1);
+		pagesNav.querySelector("#pages-nav-prev").disabled = (lastSearch.page == 1);
+		pagesNav.querySelector("#pages-nav-next").disabled = (lastSearch.page == lastSearch.pageMax);
+		pagesNav.querySelector("#pages-nav-last").disabled = (lastSearch.page == lastSearch.pageMax);
 		pagesNav.classList.add("show");
 	}
 	else {
@@ -461,7 +465,21 @@ function setIsBusy(isBusy) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Fäll upp/ner genre-filtet på topplista-sidorna
+// Bygg genrefilter-kryssrutor till topplistorna
+function buildGenreFilter(genreList) {
+	const genreSelector = document.querySelector("#filter-genre");
+	genreSelector.innerHTML = "";
+	
+	if ((genreList.genres !== undefined) && (genreList.genres !== null) && Array.isArray(genreList.genres) && (genreList.genres.length > 0)) {
+		for (const genre of genreList.genres) {
+			genreSelector.appendChild(createCheckboxOption(genre.name, genre.id, "filter-genre"));
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Göm/visa genrefiltet på topplistorna
 function showGenreFilter(filterVisible) {
 	const genrePicker = document.querySelector("#filter-genre");
 	const formControls = document.querySelector("#filter-genre-controls");
