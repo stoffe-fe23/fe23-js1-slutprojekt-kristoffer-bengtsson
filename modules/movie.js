@@ -1,29 +1,29 @@
 /*
-    Slutprojekt (The Movie Database API) - FE23 Javascript 1
-    Kristoffer Bengtsson
+	Slutprojekt (The Movie Database API) - FE23 Javascript 1
+	Kristoffer Bengtsson
 
 	Funktionalitet för att visa info om filmer från The Movie Database API.
 */
 
-import {fetchJSON} from '../modules/api.js';
+import { fetchJSON } from '../modules/api.js';
 import {
-	createImageElement, 
-	createTextField, 
-	createFieldTitle, 
-	createListField, 
-	createRatingScorePointElement, 
-	createLinkField, 
-	createWrapperBox, 
-	animateFlipInElements, 
-	animateFadeInScoreElements, 
-	getIsValidText, 
-	getIsValidNumber, 
+	createImageElement,
+	createTextField,
+	createFieldTitle,
+	createListField,
+	createRatingScorePointElement,
+	createLinkField,
+	createWrapperBox,
+	animateFlipInElements,
+	animateFadeInScoreElements,
+	getIsValidText,
+	getIsValidNumber,
 	getTruncatedText
 } from '../modules/dom-utilities.js';
 
 
 // Bas-URL för film-affischer
-const imagesUrl = "https://image.tmdb.org/t/p/w342"; 
+const imagesUrl = "https://image.tmdb.org/t/p/w342";
 
 // Lista för översättning av genre-ID till genre-namn
 const movieGenreList = {};
@@ -40,7 +40,7 @@ const movieGenreList = {};
 function displayMovieList(movies, container, displayLimit = 0, includeDescription = false) {
 	container.innerHTML = "";
 	if ((movies.total_results > 0) && (movies.results.length > 0)) {
-		movies.results = ( displayLimit > 0 ? movies.results.slice(0, displayLimit) : movies.results);
+		movies.results = (displayLimit > 0 ? movies.results.slice(0, displayLimit) : movies.results);
 		for (const movie of movies.results) {
 			if (getIsValidText(movie.poster_path, 5)) {
 				movie.poster_path = imagesUrl + movie.poster_path;
@@ -56,7 +56,7 @@ function displayMovieList(movies, container, displayLimit = 0, includeDescriptio
 // Returnera ett info-kort om en film (DOM-element)
 function getMovieCard(movie, showDescription = false) {
 	const movieCard = createWrapperBox(undefined, '', ['card', 'card-movie'], 'article');
-	const movieImage = createImageElement(movie.poster_path, `Movie poster for ${movie.title}`, '../images/no-poster.png');
+	const movieImage = createImageElement(movie.poster_path, `Movie poster for ${movie.title}`, '../images/no-poster.png', '', '#');
 	const movieTitle = createFieldTitle(movie.title, "h2");
 	movieCard.appendChild(movieImage);
 	movieCard.appendChild(movieTitle);
@@ -69,8 +69,8 @@ function getMovieCard(movie, showDescription = false) {
 	// Gör titel och affisch klickbara för att visa detaljerad info
 	movieTitle.setAttribute("details-id", movie.id);
 	movieTitle.addEventListener("click", showMediaDetails);
- 	movieImage.setAttribute("details-id", movie.id);
-	movieImage.addEventListener("click", showMediaDetails); 
+	movieImage.setAttribute("details-id", movie.id);
+	movieImage.addEventListener("click", showMediaDetails);
 	return movieCard;
 }
 
@@ -81,7 +81,7 @@ function getMovieDetailsCard(movie, container) {
 	container.innerHTML = "";
 
 	// Översättning av språk-koder till språknamn
-	const languages = new Intl.DisplayNames('en', {type: 'language'});
+	const languages = new Intl.DisplayNames('en', { type: 'language' });
 
 	const detailsBox = createWrapperBox(container, "details");
 	const moviePoster = createWrapperBox(detailsBox, "details-image");
@@ -104,11 +104,11 @@ function getMovieDetailsCard(movie, container) {
 	movieInfo.appendChild(createRatingScoreDisplay('Viewer rating', movie.vote_average));
 
 	// Extra-stats
-	movieStats.appendChild(createTextField('Original language', languages.of(movie.original_language), "details-language")); 
+	movieStats.appendChild(createTextField('Original language', languages.of(movie.original_language), "details-language"));
 	movieStats.appendChild(createTextField('Release date', movie.release_date, "details-release"));
 	movieStats.appendChild(createTextField('Status', movie.status, "details-status"));
 	movieStats.appendChild(createLinkField('More', "IMDB", `https://www.imdb.com/title/${movie.imdb_id}/`, "details-link"));
-	
+
 	return detailsBox;
 }
 
@@ -119,7 +119,7 @@ function getTVSeriesDetailsCard(series, container) {
 	container.innerHTML = "";
 
 	// Översättning av språk-koder till språknamn
-	const languages = new Intl.DisplayNames('en', {type: 'language'});
+	const languages = new Intl.DisplayNames('en', { type: 'language' });
 
 	const detailsBox = createWrapperBox(container, "details", "details-series");
 	const seriesPoster = createWrapperBox(detailsBox, "details-image");
@@ -145,12 +145,12 @@ function getTVSeriesDetailsCard(series, container) {
 	seriesInfo.appendChild(createRatingScoreDisplay('Viewer rating', series.vote_average));
 
 	// Extra-stats
-	seriesStats.appendChild(createTextField('Original language', languages.of(series.original_language), "details-language")); 
+	seriesStats.appendChild(createTextField('Original language', languages.of(series.original_language), "details-language"));
 	seriesStats.appendChild(createTextField('First aired', series.first_air_date, "details-release"));
 	seriesStats.appendChild(createTextField('Last aired', series.last_air_date, "details-release"));
 	seriesStats.appendChild(createTextField('Status', series.status, "details-status"));
 	seriesStats.appendChild(createLinkField('More', "TMDB", `https://www.themoviedb.org/tv/${series.id}`, "details-link"));
-	
+
 	return detailsBox;
 }
 
@@ -171,7 +171,7 @@ function showMediaDetails(event) {
 		const requestURL = new URL(`https://api.themoviedb.org/3/${detailsType}/${detailsId}`);
 		fetchJSON(requestURL, (result) => {
 			const detailsBox = document.querySelector("#details-dialog");
-			
+
 			if (getIsValidText(result.poster_path, 5)) {
 				result.poster_path = imagesUrl + result.poster_path;
 			}
@@ -209,7 +209,7 @@ function createGenreList(title, genres) {
 			else {
 				genreNames.push(movieGenreList[genre] !== undefined ? movieGenreList[genre] : `Unknown (${genre})`);
 			}
-			
+
 		}
 	}
 	if (genreNames.length == 0) {
@@ -223,16 +223,16 @@ function createGenreList(title, genres) {
 // Returnera grafisk representation av betygspoäng (DOM-element)
 function createRatingScoreDisplay(title, score) {
 	// Avrunda betygspoäng till heltal mellan 0-10 och skapa motsv. antal guldstjärnor
-	const scoreRounded = Math.max( Math.min( Math.round(score), 10), 0);
+	const scoreRounded = Math.max(Math.min(Math.round(score), 10), 0);
 	const scoreBox = document.createElement("div");
 	const scoreValueBox = document.createElement("span");
 
 	if (title.length > 0) {
 		scoreBox.appendChild(createFieldTitle(title));
 	}
-    for (let i = 1; i <= 10; i++) {
+	for (let i = 1; i <= 10; i++) {
 		scoreValueBox.appendChild(createRatingScorePointElement(scoreRounded >= i));
-    }
+	}
 	scoreBox.appendChild(scoreValueBox);
 	return scoreBox;
 }
@@ -244,7 +244,7 @@ function createRatingScoreDisplay(title, score) {
 function fetchGenreData(callbackFunc) {
 	const fetchResultPromise = fetchJSON('https://api.themoviedb.org/3/genre/movie/list', (genreList) => {
 		if ((genreList.genres !== undefined) && (genreList.genres !== null) && Array.isArray(genreList.genres) && (genreList.genres.length > 0)) {
-			genreList.genres.sort( (genreA, genreB) => genreA.name.localeCompare(genreB.name));
+			genreList.genres.sort((genreA, genreB) => genreA.name.localeCompare(genreB.name));
 			for (const genre of genreList.genres) {
 				movieGenreList[genre.id] = genre.name;
 			}

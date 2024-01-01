@@ -1,27 +1,27 @@
 /*
-    Slutprojekt (The Movie Database API) - FE23 Javascript 1
-    Kristoffer Bengtsson
+	Slutprojekt (The Movie Database API) - FE23 Javascript 1
+	Kristoffer Bengtsson
 
 	Funktionalitet för att visa info om personer från The Movie Database API.
 */
 
-import {fetchJSON} from '../modules/api.js';
+import { fetchJSON } from '../modules/api.js';
 import {
-	createImageElement, 
-	createTextField, 
-	createFieldTitle, 
-	addListOption, 
-	createWrapperBox, 
-	createLinkField, 
-	animateFlipInElements, 
-	getIsValidText, 
+	createImageElement,
+	createTextField,
+	createFieldTitle,
+	addListOption,
+	createWrapperBox,
+	createLinkField,
+	animateFlipInElements,
+	getIsValidText,
 	getIsValidNumber
 } from '../modules/dom-utilities.js';
-import {showMediaDetails} from '../modules/movie.js';
+import { showMediaDetails } from '../modules/movie.js';
 
 
 // Bas-URL för porträtt-foton
-const imagesUrl = "https://image.tmdb.org/t/p/h632"; 
+const imagesUrl = "https://image.tmdb.org/t/p/h632";
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ function showPersonDetails(event) {
 		const requestURL = new URL(`https://api.themoviedb.org/3/person/${personId}`);
 		fetchJSON(requestURL, (person) => {
 			const detailsBox = document.querySelector("#details-dialog");
-      		// Bygg absolut URL till porträtt-bilden
+			// Bygg absolut URL till porträtt-bilden
 			if (getIsValidText(person.profile_path, 5)) {
 				person.profile_path = imagesUrl + person.profile_path;
 			}
@@ -75,11 +75,11 @@ function getPersonDetailsCard(person, container) {
 	personInfo.appendChild(createLinkField('Home page', 'Visit home page', person.homepage, 'details-homepage'));
 
 	// Extra info
-	personStats.appendChild(createTextField('Date of birth', person.birthday, "details-birthday")); 
+	personStats.appendChild(createTextField('Date of birth', person.birthday, "details-birthday"));
 	personStats.appendChild(createTextField('Date of death', person.deathday, "details-deathday"));
-	personStats.appendChild(createTextField('Gender', personGender, "details-gender"));	
+	personStats.appendChild(createTextField('Gender', personGender, "details-gender"));
 	personStats.appendChild(createLinkField('', "IMDB", `https://www.imdb.com/name/${person.imdb_id}/`, "details-link"));
-	
+
 	return detailsBox;
 }
 
@@ -105,19 +105,19 @@ function displayPeopleList(people, container) {
 function getPersonCard(person) {
 	const personCard = createWrapperBox(undefined, '', ['card', 'card-person'], 'article');
 	const personName = createFieldTitle(person.name, "h2");
-	const personPhoto = createImageElement(person.profile_path, `Photo of ${person.name}`, '../images/no-photo.png');
+	const personPhoto = createImageElement(person.profile_path, `Photo of ${person.name}`, '../images/no-photo.png', '', '#');
 	personCard.append(
-		personPhoto, 
-		personName, 
-		createTextField("Profession", person.known_for_department), 
+		personPhoto,
+		personName,
+		createTextField("Profession", person.known_for_department),
 		createWorkHistoryList("Known from", person.known_for)
 	);
 
 	// Gör foto och namn klickbara för att visa detaljerad info
 	personName.setAttribute("person-id", person.id);
-	personName.addEventListener("click", showPersonDetails); 
+	personName.addEventListener("click", showPersonDetails);
 	personPhoto.setAttribute("person-id", person.id);
-	personPhoto.addEventListener("click", showPersonDetails); 
+	personPhoto.addEventListener("click", showPersonDetails);
 	return personCard;
 }
 
@@ -133,23 +133,23 @@ function createWorkHistoryList(title, workHistory) {
 		for (const pastWork of workHistory) {
 			const mediaLink = `https://www.themoviedb.org/${pastWork.media_type}/${pastWork.id}`;
 			const mediaName = (pastWork.media_type == "tv" ? pastWork.name : pastWork.title);
-			const pastWorkOption = addListOption(historyList, `<span class="type-${pastWork.media_type}">${pastWork.media_type}</span><a href="${mediaLink}" target="_blank">${mediaName}</a>`);  
-			
+			const pastWorkOption = addListOption(historyList, `<span class="type-${pastWork.media_type}">${pastWork.media_type}</span><a href="${mediaLink}" target="_blank">${mediaName}</a>`);
+
 			// Visa ruta med mer info om filmer och TV-serier om de klickas på i listan (övriga typer länkar till TMDB-sidan istället)
 			if ((pastWork.media_type == "movie") || (pastWork.media_type == "tv")) {
 				pastWorkOption.setAttribute("details-id", pastWork.id);
 				pastWorkOption.setAttribute("details-type", pastWork.media_type);
 				pastWorkOption.addEventListener("click", showMediaDetails);
 			}
-		}  
+		}
 	}
 	else {
-		addListOption(historyList, " - ");  
+		addListOption(historyList, " - ");
 	}
-	
+
 	historyBox.append(createFieldTitle(title), historyList);
 	return historyBox;
 }
 
 
-export {displayPeopleList, getPersonCard};
+export { displayPeopleList, getPersonCard };

@@ -1,11 +1,11 @@
 /*
-    Slutprojekt (The Movie Database API) - FE23 Javascript 1
-    Kristoffer Bengtsson
+	Slutprojekt (The Movie Database API) - FE23 Javascript 1
+	Kristoffer Bengtsson
 
 	Gemensamma verktygsfunktioner för att skapa DOM-element för visning av film/person-info.
 
-    Använder anime.js för animation av kort-visning och betygspoäng.
-    https://animejs.com/
+	Använder anime.js för animation av kort-visning och betygspoäng.
+	https://animejs.com/
 */
 
 import anime from '../lib/anime.es.js';
@@ -13,11 +13,18 @@ import anime from '../lib/anime.es.js';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Returnera ett bild-element
-export function createImageElement(url, text, placeholderImage, cssClass = '') {
+export function createImageElement(url, text, placeholderImage, cssClass = '', link = null) {
 	const imageElement = document.createElement("img");
 	imageElement.alt = (getIsValidText(text) ? text : "No description");
 	imageElement.src = (getIsValidText(url, 10) ? url : placeholderImage);
 	addClassToElement(imageElement, cssClass);
+	if (link !== null) {
+		const imageLink = document.createElement("a");
+		imageLink.href = link;
+		imageLink.appendChild(imageElement);
+		addClassToElement(imageLink, 'card-image-link');
+		return imageLink;
+	}
 	return imageElement;
 }
 
@@ -27,9 +34,9 @@ export function createImageElement(url, text, placeholderImage, cssClass = '') {
 export function createTextField(title, text, cssClass = '', allowHTML = false) {
 	const textField = document.createElement("div");
 	addClassToElement(textField, cssClass);
-    if (title.length > 0) {
-        textField.appendChild(createFieldTitle(title));    
-    }
+	if (title.length > 0) {
+		textField.appendChild(createFieldTitle(title));
+	}
 	if (allowHTML) {
 		textField.innerHTML += (getIsValidText(text) ? text : " - ");
 	}
@@ -44,7 +51,7 @@ export function createTextField(title, text, cssClass = '', allowHTML = false) {
 // Returnera ett rubrik-element av angiven rubriksnivå
 export function createFieldTitle(text, type = "h3", cssClass = '') {
 	const fieldTitle = document.createElement(type);
-	fieldTitle.innerText = ( getIsValidText(text) ? text : "Untitled" );
+	fieldTitle.innerText = (getIsValidText(text) ? text : "Untitled");
 	addClassToElement(fieldTitle, cssClass);
 	return fieldTitle;
 }
@@ -56,9 +63,9 @@ export function createListField(title, listItems, cssClass = '', listType = 'ul'
 	const listWrapper = document.createElement("div");
 	const listElement = document.createElement(listType);
 	addClassToElement(listWrapper, cssClass);
-    if (title.length > 0) {
-        listWrapper.appendChild(createFieldTitle(title));    
-    }
+	if (title.length > 0) {
+		listWrapper.appendChild(createFieldTitle(title));
+	}
 	for (const listItem of listItems) {
 		addListOption(listElement, listItem);
 	}
@@ -75,11 +82,11 @@ export function addListOption(listElement, text, url) {
 		const itemLink = document.createElement("a");
 		itemLink.target = "_blank";
 		itemLink.href = url;
-		itemLink.innerHTML = ( getIsValidText(text) ? text : " - " );
+		itemLink.innerHTML = (getIsValidText(text) ? text : " - ");
 		listItem.appendChild(itemLink);
 	}
 	else {
-		listItem.innerHTML = ( getIsValidText(text) ? text : " - " );
+		listItem.innerHTML = (getIsValidText(text) ? text : " - ");
 	}
 	listElement.appendChild(listItem);
 	return listItem;
@@ -92,14 +99,14 @@ export function createCheckboxOption(text, value, groupName) {
 	const checkboxWrapper = document.createElement("div");
 	const checkboxElem = document.createElement("input");
 	const checkboxLabel = document.createElement("label");
-	
+
 	checkboxElem.type = "checkbox";
-	checkboxElem.id = `genre-${value}`; 
+	checkboxElem.id = `genre-${value}`;
 	checkboxElem.value = value;
 	checkboxElem.checked = true;
 	checkboxElem.name = groupName;
-	
-	checkboxLabel.setAttribute("for", checkboxElem.id);	
+
+	checkboxLabel.setAttribute("for", checkboxElem.id);
 	checkboxLabel.innerText = text;
 
 	checkboxWrapper.classList.add("checkbox-wrapper");
@@ -111,15 +118,15 @@ export function createCheckboxOption(text, value, groupName) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Returnera ett SVG-bildelement baserat på "points-image" template (i HTML-filen) för visning av betygspoäng
 export function createRatingScorePointElement(isScored = false) {
-    const newSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    const newUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-    newSVG.classList.add("points");
+	const newSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+	const newUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+	newSVG.classList.add("points");
 	if (isScored) {
 		newSVG.classList.add("scored");
 	}
-    newUse.setAttribute("href", "#points-image");
-    newSVG.appendChild(newUse);
-    return newSVG;
+	newUse.setAttribute("href", "#points-image");
+	newSVG.appendChild(newUse);
+	return newSVG;
 }
 
 
@@ -130,9 +137,9 @@ export function createLinkField(title, text, url, cssClass = '') {
 	const linkElem = document.createElement("a");
 	addClassToElement(linkField, cssClass);
 
-    if (title.length > 0) {
-        linkField.appendChild(createFieldTitle(title));    
-    }
+	if (title.length > 0) {
+		linkField.appendChild(createFieldTitle(title));
+	}
 
 	if (getIsValidText(url, 4)) {
 		linkElem.target = "_blank";
@@ -171,16 +178,16 @@ export function animateFlipInElements(elemClass) {
 	anime({
 		targets: `.${elemClass}`,
 		duration: 500,
-		easing: 'linear', 
+		easing: 'linear',
 		autoplay: true,
-		delay: anime.stagger(50), 
+		delay: anime.stagger(50),
 		opacity: [
-			{value: '0', duration: 0, easing: 'linear'},
-			{value: '1', easing: 'linear'},
+			{ value: '0', duration: 0, easing: 'linear' },
+			{ value: '1', easing: 'linear' },
 		],
 		scaleX: [
-			{value: '0%', duration: 0, easing: 'linear'},
-			{value: '100%', easing: 'linear'},
+			{ value: '0%', duration: 0, easing: 'linear' },
+			{ value: '100%', easing: 'linear' },
 		],
 	});
 }
@@ -192,16 +199,16 @@ export function animateFadeInScoreElements(elemClass) {
 	anime({
 		targets: `.${elemClass}`,
 		duration: 1000,
-		easing: 'easeInQuint', 
+		easing: 'easeInQuint',
 		autoplay: true,
-		delay: anime.stagger(100), 
+		delay: anime.stagger(100),
 		opacity: [
-			{value: '0.2', duration: 0, easing: 'linear'},
-			{value: '1', easing: 'easeInQuint'},
+			{ value: '0.2', duration: 0, easing: 'linear' },
+			{ value: '1', easing: 'easeInQuint' },
 		],
 		fill: [
-			{value: 'rgb(255,255,255)', duration: 0, easing: 'linear'},
-			{value: 'rgb(255, 215, 0', easing: 'easeInQuint'},
+			{ value: 'rgb(255,255,255)', duration: 0, easing: 'linear' },
+			{ value: 'rgb(255, 215, 0', easing: 'easeInQuint' },
 		]
 	});
 }
@@ -244,6 +251,6 @@ function addClassToElement(targetElement, classesToAdd) {
 		}
 		else if (getIsValidText(classesToAdd)) {
 			targetElement.classList.add(classesToAdd);
-		}	
+		}
 	}
 }

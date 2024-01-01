@@ -145,7 +145,7 @@ document.querySelector("#filter-form").addEventListener("submit", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Sidnavigering-formulär för sökresultat (vid stora sökresultat uppdelade på flera sidor)
+// Sidnavigering-kontroller för sökresultat (vid stora sökresultat uppdelade på flera sidor)
 document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 	event.preventDefault();
 	event.submitter.blur();
@@ -475,7 +475,7 @@ function setIsBusy(isBusy) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Bygg genrefilter-kryssrutor till topplistorna
+// Bygg genre-kryssrutor till genrefilter-formuläret
 function buildGenreFilter(genreList) {
 	const genreSelector = document.querySelector("#filter-genre");
 	genreSelector.innerHTML = "";
