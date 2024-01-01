@@ -25,13 +25,19 @@
       <!-- "Flikar" för val av vad som ska visas på sidan -->
       <div id="display-mode-tabs">
         <span class="display-mode-tab"
-          ><input type="radio" name="display-mode" id="display-mode-search" value="search" checked /><label for="display-mode-search"><img src="./images/icon-search.png" />Search</label></span
+          ><input type="radio" name="display-mode" id="display-mode-search" value="search" checked /><label for="display-mode-search" tabindex="0"
+            ><img src="./images/icon-search.png" />Search</label
+          ></span
         >
         <span class="display-mode-tab"
-          ><input type="radio" name="display-mode" id="display-mode-toprated" value="toprated" /><label for="display-mode-toprated"><img src="./images/icon-toprated.png" />Top rated movies</label></span
+          ><input type="radio" name="display-mode" id="display-mode-toprated" value="toprated" /><label for="display-mode-toprated" tabindex="0"
+            ><img src="./images/icon-toprated.png" />Top rated movies</label
+          ></span
         >
         <span class="display-mode-tab"
-          ><input type="radio" name="display-mode" id="display-mode-popular" value="popular" /><label for="display-mode-popular"><img src="./images/icon-popular.png" />Popular movies</label></span
+          ><input type="radio" name="display-mode" id="display-mode-popular" value="popular" /><label for="display-mode-popular" tabindex="0"
+            ><img src="./images/icon-popular.png" />Popular movies</label
+          ></span
         >
       </div>
       <!-- Sidinnehållet, innehåll beror på aktiv flik -->
@@ -44,14 +50,14 @@
               <option value="movie">Movie</option>
               <option value="person">Person</option>
             </select>
-            <input type="text" id="search-input" />
+            <input type="text" id="search-input" tabindex="1" />
             <button id="search-submit">Search!</button>
           </div>
           <div id="search-form-summary"></div>
         </form>
         <!-- Genrefilter: Visas på Top/Popular-flikarna -->
         <form id="filter-form" class="hide">
-          <img src="images/fold-up-icon.png" id="filter-hide" alt="Hide genre filter" title="Hide genre filter" />
+          <img src="images/fold-up-icon.png" id="filter-hide" alt="Hide genre filter" title="Hide genre filter" tabindex="1" />
           <h2>What are you interested in?</h2>
           <div id="filter-genre"></div>
           <div id="filter-genre-controls">
@@ -61,8 +67,16 @@
               <button id="filter-select-all">Select All</button>
             </div>
             <div id="filter-method-picker">
-              <div><input type="radio" value="selected-only" name="filter-method" id="filter-method-all" checked /><label for="filter-method-all">Only selected genres</label></div>
-              <div><input type="radio" value="selected-one" name="filter-method" id="filter-method-one" /><label for="filter-method-one">At least one selected genre</label></div>
+              <div>
+                <input type="radio" value="selected-only" name="filter-method" id="filter-method-all" checked /><label for="filter-method-all"
+                  >Only selected genres</label
+                >
+              </div>
+              <div>
+                <input type="radio" value="selected-one" name="filter-method" id="filter-method-one" /><label for="filter-method-one"
+                  >At least one selected genre</label
+                >
+              </div>
             </div>
           </div>
         </form>

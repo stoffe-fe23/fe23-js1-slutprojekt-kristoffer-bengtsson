@@ -5,8 +5,8 @@
 	Sida som visar topplistor och sökresultat från The Movie Database API.
 	https://www.themoviedb.org/
 
-    Använder anime.js för animation av genrefilter-rutan och busy-indikator.
-    https://animejs.com/
+	Använder anime.js för animation av genrefilter-rutan och busy-indikator.
+	https://animejs.com/
 */
 
 import anime from '../lib/anime.es.js';
@@ -39,36 +39,39 @@ fetchGenreData(buildGenreFilter);
  * EVENT HANDLERS
  *****************************************************************************************************/
 
+// TODO: Kombinera dessa 3 med qrySelAll med, likt kbd.nav..
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // NAV - Klickad flik: Topp 10 topp-rankade filmer
 document.querySelector("#display-mode-toprated").addEventListener("click", (event) => {
-	document.querySelector("#search-form").classList.add("hide");
-	document.querySelector("#filter-form").classList.remove("hide");
-	resetSearchResults();
-	loadMovieTopLists("vote_average");
+	setDisplayMode(event.currentTarget.id);
 });
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // NAV - Klickad flik: Topp 10 populära filmer
 document.querySelector("#display-mode-popular").addEventListener("click", (event) => {
-	document.querySelector("#search-form").classList.add("hide");
-	document.querySelector("#filter-form").classList.remove("hide");
-	resetSearchResults();
-	loadMovieTopLists("popularity");
+	setDisplayMode(event.currentTarget.id);
 });
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // NAV - Klickad flik: Sök efter film eller person
 document.querySelector("#display-mode-search").addEventListener("click", (event) => {
-	const inputField = document.querySelector("#search-input");
-	document.querySelector("#search-form").classList.remove("hide");
-	document.querySelector("#filter-form").classList.add("hide");
-	inputField.value = "";
-	inputField.focus();
-	resetSearchResults();
+	setDisplayMode(event.currentTarget.id);
+});
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// NAV - Tangentbordsnavigation för flikarna (aktivera fokuserad flik med enter/retur)
+document.querySelectorAll("#display-mode-tabs label").forEach((tabLabel) => {
+	tabLabel.addEventListener("keyup", (event) => {
+		if (event.key == "Enter") {
+			const selectedTab = document.getElementById(event.currentTarget.getAttribute("for"));
+			selectedTab.checked = true;
+			selectedTab.dispatchEvent(new Event("click"));
+		}
+	});
 });
 
 
@@ -139,15 +142,11 @@ document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 
 	// Föregående sida
 	if (event.submitter.id == "pages-nav-prev") {
-		if (lastSearch.page > 1) {
-			findSearchResultPage(lastSearch.page - 1);
-		}
+		findSearchResultPage(lastSearch.page > 1 ? lastSearch.page - 1 : 1);
 	}
 	// Nästa sida
 	else if (event.submitter.id == "pages-nav-next") {
-		if (lastSearch.page < lastSearch.pageMax) {
-			findSearchResultPage(lastSearch.page + 1);
-		}
+		findSearchResultPage(lastSearch.page < lastSearch.pageMax ? lastSearch.page + 1 : lastSearch.pageMax);
 	}
 	// Första sidan
 	else if (event.submitter.id == "pages-nav-first") {
@@ -189,7 +188,7 @@ document.querySelector("#details-dialog").addEventListener("click", (event) => {
 	}
 });
 
-document.querySelector("#details-dialog").addEventListener("keydown", (event) => {
+document.querySelector("#details-dialog").addEventListener("keyup", (event) => {
 	if (event.key == "Escape") {
 		event.currentTarget.close();
 	}
@@ -217,6 +216,30 @@ document.querySelector("#filter-hide").addEventListener("click", (event) => {
 /*****************************************************************************************************
  * FUNKTIONER
  *****************************************************************************************************/
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Visa aktiv flik på sidan
+function setDisplayMode(displayMode) {
+	resetSearchResults();
+
+	if (displayMode == "display-mode-search") {
+		const inputField = document.querySelector("#search-input");
+		document.querySelector("#search-form").classList.remove("hide");
+		document.querySelector("#filter-form").classList.add("hide");
+		inputField.value = "";
+		inputField.focus();
+	}
+	else if (displayMode == "display-mode-toprated") {
+		document.querySelector("#search-form").classList.add("hide");
+		document.querySelector("#filter-form").classList.remove("hide");
+		loadMovieTopLists("vote_average");
+	}
+	else if (displayMode == "display-mode-popular") {
+		document.querySelector("#search-form").classList.add("hide");
+		document.querySelector("#filter-form").classList.remove("hide");
+		loadMovieTopLists("popularity");
+	}
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -469,7 +492,7 @@ function setIsBusy(isBusy) {
 function buildGenreFilter(genreList) {
 	const genreSelector = document.querySelector("#filter-genre");
 	genreSelector.innerHTML = "";
-	
+
 	if ((genreList.genres !== undefined) && (genreList.genres !== null) && Array.isArray(genreList.genres) && (genreList.genres.length > 0)) {
 		for (const genre of genreList.genres) {
 			genreSelector.appendChild(createCheckboxOption(genre.name, genre.id, "filter-genre"));
@@ -489,22 +512,22 @@ function showGenreFilter(filterVisible) {
 		anime({
 			targets: "#filter-genre",
 			duration: 500,
-			easing: 'linear', 
+			easing: 'linear',
 			autoplay: true,
 			scaleY: [
-				{value: '0%', duration: 0},
-				{value: '100%'},
+				{ value: '0%', duration: 0 },
+				{ value: '100%' },
 			],
 		}).finished.then(() => {
 			formControls.classList.remove("hide");
 			anime({
 				targets: "#filter-genre-controls",
 				duration: 350,
-				easing: 'linear', 
+				easing: 'linear',
 				autoplay: true,
 				scaleY: [
-					{value: '0%', duration: 0},
-					{value: '100%'},
+					{ value: '0%', duration: 0 },
+					{ value: '100%' },
 				],
 			});
 		});
@@ -513,25 +536,25 @@ function showGenreFilter(filterVisible) {
 		anime({
 			targets: "#filter-genre-controls",
 			duration: 350,
-			easing: 'linear', 
+			easing: 'linear',
 			autoplay: true,
 			scaleY: [
-				{value: '100%', duration: 0},
-				{value: '0%'},
+				{ value: '100%', duration: 0 },
+				{ value: '0%' },
 			],
 		}).finished.then(() => {
 			formControls.classList.add("hide");
 			anime({
 				targets: "#filter-genre",
 				duration: 500,
-				easing: 'linear', 
+				easing: 'linear',
 				autoplay: true,
 				scaleY: [
-					{value: '100%', duration: 0},
-					{value: '0%'},
+					{ value: '100%', duration: 0 },
+					{ value: '0%' },
 				],
 			}).finished.then(() => {
-				genrePicker.classList.add("hide");				
+				genrePicker.classList.add("hide");
 			});
 		});
 	}
