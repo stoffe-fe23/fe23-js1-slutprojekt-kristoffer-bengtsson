@@ -39,31 +39,41 @@ fetchGenreData(buildGenreFilter);
  * EVENT HANDLERS
  *****************************************************************************************************/
 
-// TODO: Kombinera dessa 3 med qrySelAll med, likt kbd.nav..
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// NAV - Klickad flik: Topp 10 topp-rankade filmer
-document.querySelector("#display-mode-toprated").addEventListener("click", (event) => {
-	setDisplayMode(event.currentTarget.id);
+// NAV - Visa klickad flik på sidan
+document.querySelectorAll(`#display-mode-tabs input[name="display-mode"]`).forEach((tabRadio) => {
+	tabRadio.addEventListener("click", (event) => {
+		const searchForm = document.querySelector("#search-form");
+		const filterForm = document.querySelector("#filter-form");
+
+		resetSearchResults();
+		// Sökformulär för film/person
+		if (event.currentTarget.id == "display-mode-search") {
+			const inputField = document.querySelector("#search-input");
+			searchForm.classList.remove("hide");
+			filterForm.classList.add("hide");
+			inputField.value = "";
+			inputField.focus();
+		}
+		// Topplista: Top Rated movies
+		else if (event.currentTarget.id == "display-mode-toprated") {
+			searchForm.classList.add("hide");
+			filterForm.classList.remove("hide");
+			loadMovieTopLists("vote_average");
+		}
+		// Topplista: Popular movies
+		else if (event.currentTarget.id == "display-mode-popular") {
+			searchForm.classList.add("hide");
+			filterForm.classList.remove("hide");
+			loadMovieTopLists("popularity");
+		}
+	});
 });
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// NAV - Klickad flik: Topp 10 populära filmer
-document.querySelector("#display-mode-popular").addEventListener("click", (event) => {
-	setDisplayMode(event.currentTarget.id);
-});
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// NAV - Klickad flik: Sök efter film eller person
-document.querySelector("#display-mode-search").addEventListener("click", (event) => {
-	setDisplayMode(event.currentTarget.id);
-});
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// NAV - Tangentbordsnavigation för flikarna (aktivera fokuserad flik med enter/retur)
+// NAV - Tangentbordsnavigation för flikarna (visa fokuserad flik med enter/retur-tangenten)
 document.querySelectorAll("#display-mode-tabs label").forEach((tabLabel) => {
 	tabLabel.addEventListener("keyup", (event) => {
 		if (event.key == "Enter") {
@@ -198,6 +208,7 @@ document.querySelector("#details-dialog").addEventListener("keyup", (event) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Kontroll för att dölja eller visa genre-filtret för topplistorna
 document.querySelector("#filter-hide").addEventListener("click", (event) => {
+	event.preventDefault();
 	if (event.currentTarget.classList.contains("hidden")) {
 		event.currentTarget.classList.remove("hidden");
 		event.currentTarget.title = "Hide genre filter";
@@ -216,30 +227,6 @@ document.querySelector("#filter-hide").addEventListener("click", (event) => {
 /*****************************************************************************************************
  * FUNKTIONER
  *****************************************************************************************************/
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa aktiv flik på sidan
-function setDisplayMode(displayMode) {
-	resetSearchResults();
-
-	if (displayMode == "display-mode-search") {
-		const inputField = document.querySelector("#search-input");
-		document.querySelector("#search-form").classList.remove("hide");
-		document.querySelector("#filter-form").classList.add("hide");
-		inputField.value = "";
-		inputField.focus();
-	}
-	else if (displayMode == "display-mode-toprated") {
-		document.querySelector("#search-form").classList.add("hide");
-		document.querySelector("#filter-form").classList.remove("hide");
-		loadMovieTopLists("vote_average");
-	}
-	else if (displayMode == "display-mode-popular") {
-		document.querySelector("#search-form").classList.add("hide");
-		document.querySelector("#filter-form").classList.remove("hide");
-		loadMovieTopLists("popularity");
-	}
-}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////

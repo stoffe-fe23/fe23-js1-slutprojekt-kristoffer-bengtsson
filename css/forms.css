@@ -28,10 +28,6 @@ form button {
   cursor: pointer;
 }
 
-form input:focus {
-  outline: 0;
-}
-
 form button:focus,
 form button:not(:disabled):hover {
   background-color: yellow;
@@ -64,7 +60,11 @@ form button:not(:disabled):hover {
   cursor: pointer;
 }
 
-#filter-hide.hidden {
+#filter-hide img {
+  display: block;
+}
+
+#filter-hide.hidden img {
   transform: rotate(180deg);
 }
 
