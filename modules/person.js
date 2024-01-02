@@ -65,7 +65,7 @@ function getPersonDetailsCard(person, container) {
 	}
 
 	// Foto
-	personPhoto.appendChild(createImageElement(person.profile_path, `Photo of ${person.name}`, '../images/no-photo.png'));
+	personPhoto.appendChild(createImageElement(person.profile_path, `Photo of ${person.name}`, './images/no-photo.png'));
 
 	// Huvudinfo-ruta
 	personInfo.appendChild(createFieldTitle(person.name, "h2", "details-name"));
@@ -105,7 +105,7 @@ function displayPeopleList(people, container) {
 function getPersonCard(person) {
 	const personCard = createWrapperBox(undefined, '', ['card', 'card-person'], 'article');
 	const personName = createFieldTitle(person.name, "h2");
-	const personPhoto = createImageElement(person.profile_path, `Photo of ${person.name}`, '../images/no-photo.png', '', '#');
+	const personPhoto = createImageElement(person.profile_path, `Photo of ${person.name}`, './images/no-photo.png', '', '#');
 	personCard.append(
 		personPhoto,
 		personName,

@@ -56,7 +56,7 @@ function displayMovieList(movies, container, displayLimit = 0, includeDescriptio
 // Returnera ett info-kort om en film (DOM-element)
 function getMovieCard(movie, showDescription = false) {
 	const movieCard = createWrapperBox(undefined, '', ['card', 'card-movie'], 'article');
-	const movieImage = createImageElement(movie.poster_path, `Movie poster for ${movie.title}`, '../images/no-poster.png', '', '#');
+	const movieImage = createImageElement(movie.poster_path, `Movie poster for ${movie.title}`, './images/no-poster.png', '', '#');
 	const movieTitle = createFieldTitle(movie.title, "h2");
 	movieCard.appendChild(movieImage);
 	movieCard.appendChild(movieTitle);
@@ -91,7 +91,7 @@ function getMovieDetailsCard(movie, container) {
 	const movieOverview = movie.overview.replaceAll("\n", "<br>").trim();
 
 	// Affisch
-	moviePoster.appendChild(createImageElement(movie.poster_path, `Poster for the movie ${movie.title}`, '../images/no-poster.png'));
+	moviePoster.appendChild(createImageElement(movie.poster_path, `Poster for the movie ${movie.title}`, './images/no-poster.png'));
 
 	// Info
 	movieInfo.appendChild(createFieldTitle(movie.title, "h2", "details-title"));
