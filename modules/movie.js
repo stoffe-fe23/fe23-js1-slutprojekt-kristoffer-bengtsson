@@ -127,7 +127,7 @@ function getTVSeriesDetailsCard(series, container) {
 	const seriesStats = createWrapperBox(detailsBox, "details-stats");
 
 	// Affisch
-	seriesPoster.appendChild(createImageElement(series.poster_path, `Poster for the TV-series ${series.name}`, '../images/no-poster.png'));
+	seriesPoster.appendChild(createImageElement(series.poster_path, `Poster for the TV-series ${series.name}`, './images/no-poster.png'));
 
 	// Info
 	seriesInfo.appendChild(createFieldTitle(series.name, "h2", "details-title"));
