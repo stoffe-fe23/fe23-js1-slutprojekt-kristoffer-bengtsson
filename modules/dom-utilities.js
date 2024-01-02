@@ -4,7 +4,7 @@
 
 	Gemensamma verktygsfunktioner för att skapa DOM-element för visning av film/person-info.
 
-	Använder anime.js för animation av kort-visning och betygspoäng.
+	Använder anime.js för animation av visning av kort och betygspoäng.
 	https://animejs.com/
 */
 
@@ -12,7 +12,7 @@ import anime from '../lib/anime.es.js';
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett bild-element
+// Returnera ett nytt bild-element
 export function createImageElement(url, text, placeholderImage, cssClass = '', link = null) {
 	const imageElement = document.createElement("img");
 	imageElement.alt = (getIsValidText(text) ? text : "No description");
@@ -30,7 +30,7 @@ export function createImageElement(url, text, placeholderImage, cssClass = '', l
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett text-element med en rubrik
+// Returnera ett nytt text-element med en rubrik
 export function createTextField(title, text, cssClass = '', allowHTML = false) {
 	const textField = document.createElement("div");
 	addClassToElement(textField, cssClass);
@@ -48,7 +48,7 @@ export function createTextField(title, text, cssClass = '', allowHTML = false) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett rubrik-element av angiven rubriksnivå
+// Returnera ett nytt rubrik-element av angiven rubriksnivå
 export function createFieldTitle(text, type = "h3", cssClass = '') {
 	const fieldTitle = document.createElement(type);
 	fieldTitle.innerText = (getIsValidText(text) ? text : "Untitled");
@@ -58,7 +58,7 @@ export function createFieldTitle(text, type = "h3", cssClass = '') {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera en HTML-lista med en rubrik
+// Returnera en ny HTML-lista med en rubrik
 export function createListField(title, listItems, cssClass = '', listType = 'ul') {
 	const listWrapper = document.createElement("div");
 	const listElement = document.createElement(listType);
@@ -94,7 +94,7 @@ export function addListOption(listElement, text, url) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett grupperat checkbox-element 
+// Returnera ett nytt namn-grupperat checkbox-element 
 export function createCheckboxOption(text, value, groupName) {
 	const checkboxWrapper = document.createElement("div");
 	const checkboxElem = document.createElement("input");
@@ -131,7 +131,7 @@ export function createRatingScorePointElement(isScored = false) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett hyperlänkat textelement med rubrik
+// Returnera ett nytt hyperlänkat textelement med rubrik
 export function createLinkField(title, text, url, cssClass = '') {
 	const linkField = document.createElement("div");
 	const linkElem = document.createElement("a");
@@ -158,7 +158,7 @@ export function createLinkField(title, text, url, cssClass = '') {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett nyskapat container-element med angivet ID
+// Returnera ett nytt container-element
 export function createWrapperBox(parentContainer, elementID, cssClass = '', elementType = 'div') {
 	const wrapperBox = document.createElement(elementType);
 	if ((elementID !== undefined) && (elementID.length > 0)) {
@@ -243,7 +243,7 @@ export function getTruncatedText(truncText, maxLength) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Lägg till klass(er) till ett element om classesToAdd är satt
+// Lägg till CSS-klass(er) till ett element
 function addClassToElement(targetElement, classesToAdd) {
 	if (classesToAdd.length > 0) {
 		if (Array.isArray(classesToAdd)) {

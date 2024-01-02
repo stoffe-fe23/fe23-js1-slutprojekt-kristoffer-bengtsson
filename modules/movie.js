@@ -26,7 +26,7 @@ import {
 const imagesUrl = "https://image.tmdb.org/t/p/w342";
 
 // Lista för översättning av genre-ID till genre-namn
-const movieGenreList = {};
+let movieGenreList = {};
 
 
 /*****************************************************************************************************
@@ -239,11 +239,13 @@ function createRatingScoreDisplay(title, score) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Hämta genre-data från API och bygg uppslagslista. (Skicka ev. resultat till callbackFunc också)
+// Hämta genre-data från API och bygg uppslagslista.
 // Se: https://developer.themoviedb.org/reference/genre-movie-list
 function fetchGenreData(callbackFunc) {
 	const fetchResultPromise = fetchJSON('https://api.themoviedb.org/3/genre/movie/list', (genreList) => {
+		// Bygg genre-uppslagslista för ID till Namn
 		if ((genreList.genres !== undefined) && (genreList.genres !== null) && Array.isArray(genreList.genres) && (genreList.genres.length > 0)) {
+			movieGenreList = {};
 			genreList.genres.sort((genreA, genreB) => genreA.name.localeCompare(genreB.name));
 			for (const genre of genreList.genres) {
 				movieGenreList[genre.id] = genre.name;
@@ -251,6 +253,7 @@ function fetchGenreData(callbackFunc) {
 		}
 	}, "Unable to load genre list. Movie filters may be unavailable.");
 
+	// Skicka resultat till callback med om den är satt
 	if (typeof callbackFunc == "function") {
 		fetchResultPromise.then(callbackFunc);
 	}

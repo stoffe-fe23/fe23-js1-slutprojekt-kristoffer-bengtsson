@@ -15,7 +15,8 @@ import { displayMovieList, fetchGenreData } from '../modules/movie.js';
 import { fetchJSON, setAPIErrorDisplayFunction } from '../modules/api.js';
 import { getIsValidNumber, createCheckboxOption } from '../modules/dom-utilities.js';
 
-// GLOBAL: Innehåller info om senaste sökningen som användaren gjort.
+
+// GLOBAL: Innehåller info om senaste sökningen användaren utfört.
 const lastSearch = {
 	type: '',
 	query: '',
@@ -41,15 +42,16 @@ fetchGenreData(buildGenreFilter);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// NAV - Visa klickad flik på sidan
+// NAV - Visa aktiv flik på sidan
 document.querySelectorAll(`#display-mode-tabs input[name="display-mode"]`).forEach((tabRadio) => {
-	tabRadio.addEventListener("click", (event) => {
+	tabRadio.addEventListener("change", (event) => {
 		const searchForm = document.querySelector("#search-form");
 		const filterForm = document.querySelector("#filter-form");
 
 		resetSearchResults();
+
 		// Sökformulär för film/person
-		if (event.currentTarget.id == "display-mode-search") {
+		if (event.currentTarget.value == "search") {
 			const inputField = document.querySelector("#search-input");
 			searchForm.classList.remove("hide");
 			filterForm.classList.add("hide");
@@ -57,13 +59,13 @@ document.querySelectorAll(`#display-mode-tabs input[name="display-mode"]`).forEa
 			inputField.focus();
 		}
 		// Topplista: Top Rated movies
-		else if (event.currentTarget.id == "display-mode-toprated") {
+		else if (event.currentTarget.value == "toprated") {
 			searchForm.classList.add("hide");
 			filterForm.classList.remove("hide");
 			loadMovieTopLists("vote_average");
 		}
 		// Topplista: Popular movies
-		else if (event.currentTarget.id == "display-mode-popular") {
+		else if (event.currentTarget.value == "popular") {
 			searchForm.classList.add("hide");
 			filterForm.classList.remove("hide");
 			loadMovieTopLists("popularity");
@@ -79,14 +81,14 @@ document.querySelectorAll("#display-mode-tabs label").forEach((tabLabel) => {
 		if (event.key == "Enter") {
 			const selectedTab = document.getElementById(event.currentTarget.getAttribute("for"));
 			selectedTab.checked = true;
-			selectedTab.dispatchEvent(new Event("click"));
+			selectedTab.dispatchEvent(new Event("change"));
 		}
 	});
 });
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Sökformulär för film/person
+// Sökformulär för film/person - utför sökning
 document.querySelector("#search-form").addEventListener("submit", (event) => {
 	event.preventDefault();
 
@@ -104,7 +106,7 @@ document.querySelector("#search-form").addEventListener("submit", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Flytta fokus till sökfältet när söktyp ändras
+// Sökformulär - Flytta fokus till sökfältet när söktyp ändras
 document.querySelector("#search-type").addEventListener("change", (event) => {
 	const searchInput = document.querySelector("#search-input");
 	searchInput.focus();
@@ -112,7 +114,7 @@ document.querySelector("#search-type").addEventListener("change", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Markera ev. befintlig text i sökfältet när det får fokus
+// Sökformulär - Markera ev. befintlig text i sökfältet när det får fokus
 document.querySelector("#search-input").addEventListener("focus", (event) => {
 	event.target.select();
 });
@@ -123,7 +125,7 @@ document.querySelector("#search-input").addEventListener("focus", (event) => {
 document.querySelector("#filter-form").addEventListener("submit", (event) => {
 	event.preventDefault();
 
-	// Markera/avmarkera alla kryssrutor
+	// Markera eller avmarkera alla kryssrutor
 	if ((event.submitter.id == "filter-deselect-all") || (event.submitter.id == "filter-select-all")) {
 		const checkedBoxes = event.target.querySelectorAll(`input[type="checkbox"]`);
 		for (const checkedBox of checkedBoxes) {
@@ -145,7 +147,7 @@ document.querySelector("#filter-form").addEventListener("submit", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Sidnavigering-kontroller för sökresultat (vid stora sökresultat uppdelade på flera sidor)
+// Sidnavigering-kontroller för sökresultat (vid sökresultat uppdelade på flera sidor)
 document.querySelector("#pages-nav").addEventListener("submit", (event) => {
 	event.preventDefault();
 	event.submitter.blur();
@@ -206,7 +208,7 @@ document.querySelector("#details-dialog").addEventListener("keyup", (event) => {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Kontroll för att dölja eller visa genre-filtret för topplistorna
+// Kontroll för att dölja eller visa genre-filtret på topplistorna
 document.querySelector("#filter-hide").addEventListener("click", (event) => {
 	event.preventDefault();
 	if (event.currentTarget.classList.contains("hidden")) {
