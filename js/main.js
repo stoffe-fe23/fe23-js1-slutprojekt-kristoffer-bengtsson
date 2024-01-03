@@ -221,7 +221,6 @@ document.querySelector("#filter-hide").addEventListener("click", (event) => {
 		event.currentTarget.title = "Show genre filter";
 		showGenreFilter(false);
 	}
-	event.currentTarget.alt = event.currentTarget.title;
 });
 
 
@@ -309,11 +308,10 @@ function findSearchResultPage(page) {
 // Visa resultat av sökning på film eller person 
 function showSearchResults(searchResults) {
 	displayPageNav(searchResults.page, searchResults.total_pages);
+	displaySearchSummary(searchResults.results.length, searchResults.total_results);
 
 	if (Array.isArray(searchResults.results) && (searchResults.results.length > 0)) {
 		const resultsBox = document.querySelector("#results");
-
-		displaySearchSummary(searchResults.results.length, searchResults.total_results);
 
 		// Title-fältet finns: det är en film
 		if (searchResults.results[0].title !== undefined) {
@@ -430,6 +428,7 @@ function displaySearchSummary(currentCount, totalCount) {
 		let intervalStart = (lastSearch.page * lastSearch.perPage) - (lastSearch.perPage - 1)
 		let intervalEnd = lastSearch.page * lastSearch.perPage;
 		intervalEnd = (intervalEnd > totalCount ? totalCount : intervalEnd);
+
 		searchSummaryBox.innerText = `${totalCount} ${lastSearch.type}${totalCount == 1 ? "" : "s"} found matching "${lastSearch.query}"`;
 		searchSummaryBox.innerText += (intervalStart == intervalEnd ? `, showing last one.` : `, showing ${intervalStart}-${intervalEnd}.`);
 	}

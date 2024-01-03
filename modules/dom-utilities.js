@@ -232,7 +232,7 @@ export function getIsValidNumber(number) {
 // Returnera en sträng nedklippt till angivet max antal tecken (utan att klippa mitt i ord)
 export function getTruncatedText(truncText, maxLength) {
 	if (maxLength < truncText.length) {
-		let cutOffLength = Math.min(maxLength, truncText.lastIndexOf(" ", maxLength));
+		let cutOffLength = truncText.lastIndexOf(" ", maxLength);
 		if (cutOffLength < 1) {
 			cutOffLength = maxLength;
 		}

@@ -148,7 +148,6 @@ form button:not(:disabled):hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  align-items: center;
   flex-wrap: nowrap;
   background-color: black;
   color: white;

@@ -29,13 +29,8 @@ const imagesUrl = "https://image.tmdb.org/t/p/w342";
 let movieGenreList = {};
 
 
-/*****************************************************************************************************
- * FUNKTIONER
- *****************************************************************************************************/
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa en samling av upp till displayLimit film-kort (0 = alla). Inkludera kort beskrivning om 
+// Visa en samling av upp till displayLimit filminfo-kort (0 = visa alla). Inkludera beskrivning om 
 // includeDescription är satt. 
 function displayMovieList(movies, container, displayLimit = 0, includeDescription = false) {
 	container.innerHTML = "";
@@ -76,86 +71,6 @@ function getMovieCard(movie, showDescription = false) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera och infoga ett kort med detaljerad info om en film (DOM-element)
-function getMovieDetailsCard(movie, container) {
-	container.innerHTML = "";
-
-	// Översättning av språk-koder till språknamn
-	const languages = new Intl.DisplayNames('en', { type: 'language' });
-
-	const detailsBox = createWrapperBox(container, "details");
-	const moviePoster = createWrapperBox(detailsBox, "details-image");
-	const movieInfo = createWrapperBox(detailsBox, "details-info");
-	const movieStats = createWrapperBox(detailsBox, "details-stats");
-
-	const movieOverview = movie.overview.replaceAll("\n", "<br>").trim();
-
-	// Affisch
-	moviePoster.appendChild(createImageElement(movie.poster_path, `Poster for the movie ${movie.title}`, './images/no-poster.png'));
-
-	// Info
-	movieInfo.appendChild(createFieldTitle(movie.title, "h2", "details-title"));
-	if (movie.tagline.length > 0) {
-		movieInfo.appendChild(createTextField('', movie.tagline, "details-tagline"));
-	}
-	movieInfo.appendChild(createTextField('', movieOverview, "details-overview", true));
-	movieInfo.appendChild(createGenreList('Genres', movie.genres));
-	movieInfo.appendChild(createTextField('Play time', `${movie.runtime} minutes`, "details-runtime"));
-	movieInfo.appendChild(createRatingScoreDisplay('Viewer rating', movie.vote_average));
-
-	// Extra-stats
-	movieStats.appendChild(createTextField('Original language', languages.of(movie.original_language), "details-language"));
-	movieStats.appendChild(createTextField('Release date', movie.release_date, "details-release"));
-	movieStats.appendChild(createTextField('Status', movie.status, "details-status"));
-	movieStats.appendChild(createLinkField('More', "IMDB", `https://www.imdb.com/title/${movie.imdb_id}/`, "details-link"));
-
-	return detailsBox;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera och infoga ett kort med detaljerad info om en TV-serie (DOM-element)
-function getTVSeriesDetailsCard(series, container) {
-	container.innerHTML = "";
-
-	// Översättning av språk-koder till språknamn
-	const languages = new Intl.DisplayNames('en', { type: 'language' });
-
-	const detailsBox = createWrapperBox(container, "details", "details-series");
-	const seriesPoster = createWrapperBox(detailsBox, "details-image");
-	const seriesInfo = createWrapperBox(detailsBox, "details-info");
-	const seriesStats = createWrapperBox(detailsBox, "details-stats");
-
-	// Affisch
-	seriesPoster.appendChild(createImageElement(series.poster_path, `Poster for the TV-series ${series.name}`, './images/no-poster.png'));
-
-	// Info
-	seriesInfo.appendChild(createFieldTitle(series.name, "h2", "details-title"));
-	if (series.tagline.length > 0) {
-		seriesInfo.appendChild(createTextField('', series.tagline, "details-tagline"));
-	}
-	seriesInfo.appendChild(createTextField('', series.overview.replaceAll("\n", "<br>").trim(), "details-overview-series", true));
-	seriesInfo.appendChild(createGenreList('Genres', series.genres));
-	seriesInfo.appendChild(createTextField('Number of seasons', `${series.number_of_seasons}`, "details-seasons"));
-	seriesInfo.appendChild(createTextField('Number of episodes', `${series.number_of_episodes}`, "details-episodes"));
-	seriesInfo.appendChild(createTextField('Episode play time', `${series.episode_run_time} minutes`, "details-runtime"));
-	if (series.networks.length > 0) {
-		seriesInfo.appendChild(createListField('Aired on networks', series.networks.map((network) => network.name), "networks-list"));
-	}
-	seriesInfo.appendChild(createRatingScoreDisplay('Viewer rating', series.vote_average));
-
-	// Extra-stats
-	seriesStats.appendChild(createTextField('Original language', languages.of(series.original_language), "details-language"));
-	seriesStats.appendChild(createTextField('First aired', series.first_air_date, "details-release"));
-	seriesStats.appendChild(createTextField('Last aired', series.last_air_date, "details-release"));
-	seriesStats.appendChild(createTextField('Status', series.status, "details-status"));
-	seriesStats.appendChild(createLinkField('More', "TMDB", `https://www.themoviedb.org/tv/${series.id}`, "details-link"));
-
-	return detailsBox;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 // Event-callbackfunktion för att visa detaljerad info om en film eller TV-serie vars ID är satt på 
 // "details-id" attributet på elementet som triggar eventet. Attributet "details-type" anger om det
 // är en film eller TV-serie som ska visas (film om attributet ej är satt).
@@ -186,6 +101,92 @@ function showMediaDetails(event) {
 			animateFadeInScoreElements('scored');
 		});
 	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Returnera och infoga ett kort med detaljerad info om en film (DOM-element)
+function getMovieDetailsCard(movie, container) {
+	container.innerHTML = "";
+
+	// Översättning av språk-koder till språknamn
+	const languages = new Intl.DisplayNames('en', { type: 'language' });
+
+	const detailsBox = createWrapperBox(container, "details");
+	const moviePoster = createWrapperBox(detailsBox, "details-image");
+	const movieInfo = createWrapperBox(detailsBox, "details-info");
+	const movieStats = createWrapperBox(detailsBox, "details-stats");
+
+	// Affisch
+	moviePoster.appendChild(createImageElement(movie.poster_path, `Poster for the movie ${movie.title}`, './images/no-poster.png'));
+
+	// Info
+	movieInfo.appendChild(createFieldTitle(movie.title, "h2", "details-title"));
+	if (movie.tagline.length > 0) {
+		movieInfo.appendChild(createTextField('', movie.tagline, "details-tagline"));
+	}
+	movieInfo.append(
+		createTextField('', movie.overview.replaceAll("\n", "<br>").trim(), "details-overview", true),
+		createGenreList('Genres', movie.genres),
+		createTextField('Play time', `${movie.runtime} minutes`, "details-runtime"),
+		createRatingScoreDisplay('Viewer rating', movie.vote_average)
+	);
+
+	// Extra-stats
+	movieStats.append(
+		createTextField('Original language', languages.of(movie.original_language), "details-language"),
+		createTextField('Release date', movie.release_date, "details-release"),
+		createTextField('Status', movie.status, "details-status"),
+		createLinkField('More', "IMDB", `https://www.imdb.com/title/${movie.imdb_id}/`, "details-link")
+	);
+
+	return detailsBox;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Returnera och infoga ett kort med detaljerad info om en TV-serie (DOM-element)
+function getTVSeriesDetailsCard(series, container) {
+	container.innerHTML = "";
+
+	// Översättning av språk-koder till språknamn
+	const languages = new Intl.DisplayNames('en', { type: 'language' });
+
+	const detailsBox = createWrapperBox(container, "details", "details-series");
+	const seriesPoster = createWrapperBox(detailsBox, "details-image");
+	const seriesInfo = createWrapperBox(detailsBox, "details-info");
+	const seriesStats = createWrapperBox(detailsBox, "details-stats");
+
+	// Affisch
+	seriesPoster.appendChild(createImageElement(series.poster_path, `Poster for the TV-series ${series.name}`, './images/no-poster.png'));
+
+	// Info
+	seriesInfo.appendChild(createFieldTitle(series.name, "h2", "details-title"));
+	if (series.tagline.length > 0) {
+		seriesInfo.appendChild(createTextField('', series.tagline, "details-tagline"));
+	}
+	seriesInfo.append(
+		createTextField('', series.overview.replaceAll("\n", "<br>").trim(), "details-overview-series", true),
+		createGenreList('Genres', series.genres),
+		createTextField('Number of seasons', `${series.number_of_seasons}`, "details-seasons"),
+		createTextField('Number of episodes', `${series.number_of_episodes}`, "details-episodes"),
+		createTextField('Episode play time', `${series.episode_run_time} minutes`, "details-runtime")
+	);
+	if (series.networks.length > 0) {
+		seriesInfo.appendChild(createListField('Aired on networks', series.networks.map((network) => network.name), "networks-list"));
+	}
+	seriesInfo.appendChild(createRatingScoreDisplay('Viewer rating', series.vote_average));
+
+	// Extra-stats
+	seriesStats.append(
+		createTextField('Original language', languages.of(series.original_language), "details-language"),
+		createTextField('First aired', series.first_air_date, "details-release"),
+		createTextField('Last aired', series.last_air_date, "details-release"),
+		createTextField('Status', series.status, "details-status"),
+		createLinkField('More', "TMDB", `https://www.themoviedb.org/tv/${series.id}`, "details-link")
+	);
+
+	return detailsBox;
 }
 
 

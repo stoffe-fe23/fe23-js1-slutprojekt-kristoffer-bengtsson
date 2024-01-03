@@ -2,7 +2,7 @@
     Slutprojekt (The Movie Database API) - FE23 Javascript 1
     Kristoffer Bengtsson
 
-	Funktionalitet för att hämta information från API.
+    Funktionalitet för att hämta information från API.
     https://developer.themoviedb.org/reference/intro/getting-started
 */
 
@@ -15,6 +15,7 @@ let displayErrorMessage = console.log;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Hämta information från API och skicka till callback-funktion
+// Om errorMessageOverride är satt används det som generellt felmeddelande om något går fel, oavsett vad.
 async function fetchJSON(url, callbackFunc, errorMessageOverride = '') {
     try {
         // Om url-parametern är en sträng, gör om till URL-objekt...
@@ -27,11 +28,11 @@ async function fetchJSON(url, callbackFunc, errorMessageOverride = '') {
 
         // Skicka förfrågan
         const response = await fetch(url);
-        if (!response.ok)
+        if (!response.ok) {
             throw new MovieAPIError(response.statusText, response.status);
-
+        }
         const result = await response.json();
-        if (typeof callbackFunc == "function") {
+        if ((callbackFunc !== undefined) && (typeof callbackFunc == "function")) {
             callbackFunc(result);
         }
         return result;
@@ -44,6 +45,7 @@ async function fetchJSON(url, callbackFunc, errorMessageOverride = '') {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Felhanterare för API-anrop
+// Se: https://developer.themoviedb.org/docs/errors
 function errorHandlerAPI(error, errorMessageOverride) {
     if (errorMessageOverride.length > 0) {
         displayErrorMessage(errorMessageOverride);
@@ -68,7 +70,7 @@ function errorHandlerAPI(error, errorMessageOverride) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Ange funktion som skall användas för att visa felmeddelande för användaren
+// Ange callback-funktion som skall användas för att visa felmeddelande för användaren
 function setAPIErrorDisplayFunction(displayFunction) {
     displayErrorMessage = displayFunction;
 }
@@ -85,4 +87,4 @@ class MovieAPIError extends Error {
 }
 
 
-export {fetchJSON, setAPIErrorDisplayFunction};
+export { fetchJSON, setAPIErrorDisplayFunction };

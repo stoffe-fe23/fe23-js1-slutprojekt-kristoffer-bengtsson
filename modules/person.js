@@ -25,6 +25,46 @@ const imagesUrl = "https://image.tmdb.org/t/p/h632";
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+// Visa översiktskort över en samling personer i angivet container-element
+function displayPeopleList(people, container) {
+	container.innerHTML = "";
+	if ((people.total_results > 0) && (people.results.length > 0)) {
+		for (const person of people.results) {
+			if (getIsValidText(person.profile_path, 5)) {
+				person.profile_path = imagesUrl + person.profile_path;
+			}
+			container.appendChild(getPersonCard(person));
+		}
+		animateFlipInElements('card');
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Returnera ett info-kort om en person (DOM-element)
+function getPersonCard(person) {
+	const personCard = createWrapperBox(undefined, '', ['card', 'card-person'], 'article');
+	const personName = createFieldTitle(person.name, "h2");
+	const personPhoto = createImageElement(person.profile_path, `Photo of ${person.name}`, './images/no-photo.png', '', '#');
+	personCard.append(
+		personPhoto,
+		personName,
+		createTextField("Known for", person.known_for_department)
+	);
+	if ((person.known_for !== undefined) && (person.known_for !== null) && (person.known_for.length > 0)) {
+		personCard.appendChild(createWorkHistoryList("Known from", person.known_for));
+	}
+
+	// Gör foto och namn klickbara för att visa detaljerad info
+	personName.setAttribute("person-id", person.id);
+	personName.addEventListener("click", showPersonDetails);
+	personPhoto.setAttribute("person-id", person.id);
+	personPhoto.addEventListener("click", showPersonDetails);
+	return personCard;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 // Event-callbackfunktion för att visa detaljerad info om en person vars ID är satt i "person-id" 
 // attributet på elementet som triggar eventet. 
 function showPersonDetails(event) {
@@ -47,7 +87,7 @@ function showPersonDetails(event) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera (och infoga) ett kort med detaljerad info om en person (DOM-element)
+// Returnera (och infoga i container-element) ett kort med detaljerad info om en person (DOM-element)
 function getPersonDetailsCard(person, container) {
 	container.innerHTML = "";
 
@@ -56,7 +96,6 @@ function getPersonDetailsCard(person, container) {
 	const personInfo = createWrapperBox(detailsBox, "details-info");
 	const personStats = createWrapperBox(detailsBox, "details-stats");
 
-	const personBiography = person.biography.replaceAll("\n", "<br>").trim();
 	let personGender;
 	switch (person.gender) {
 		case 1: personGender = "Female"; break;
@@ -68,62 +107,28 @@ function getPersonDetailsCard(person, container) {
 	personPhoto.appendChild(createImageElement(person.profile_path, `Photo of ${person.name}`, './images/no-photo.png'));
 
 	// Huvudinfo-ruta
-	personInfo.appendChild(createFieldTitle(person.name, "h2", "details-name"));
-	personInfo.appendChild(createTextField('', personBiography, "details-biography", true));
-	personInfo.appendChild(createTextField('Known for', person.known_for_department, "details-knownfor"));
-	personInfo.appendChild(createTextField('Birthplace', person.place_of_birth, "details-birthplace"));
-	personInfo.appendChild(createLinkField('Home page', 'Visit home page', person.homepage, 'details-homepage'));
+	personInfo.append(
+		createFieldTitle(person.name, "h2", "details-name"),
+		createTextField('', person.biography.replaceAll("\n", "<br>").trim(), "details-biography", true),
+		createTextField('Known for', person.known_for_department, "details-knownfor"),
+		createTextField('Birthplace', person.place_of_birth, "details-birthplace"),
+		createLinkField('Home page', 'Visit home page', person.homepage, 'details-homepage')
+	);
 
 	// Extra info
-	personStats.appendChild(createTextField('Date of birth', person.birthday, "details-birthday"));
-	personStats.appendChild(createTextField('Date of death', person.deathday, "details-deathday"));
-	personStats.appendChild(createTextField('Gender', personGender, "details-gender"));
-	personStats.appendChild(createLinkField('', "IMDB", `https://www.imdb.com/name/${person.imdb_id}/`, "details-link"));
+	personStats.append(
+		createTextField('Date of birth', person.birthday, "details-birthday"),
+		createTextField('Date of death', person.deathday, "details-deathday"),
+		createTextField('Gender', personGender, "details-gender"),
+		createLinkField('', "IMDB", `https://www.imdb.com/name/${person.imdb_id}/`, "details-link")
+	);
 
 	return detailsBox;
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// Visa översikt över en samling personer i angivet container-element
-function displayPeopleList(people, container) {
-	container.innerHTML = "";
-	if ((people.total_results > 0) && (people.results.length > 0)) {
-		for (const person of people.results) {
-			if (getIsValidText(person.profile_path, 5)) {
-				person.profile_path = imagesUrl + person.profile_path;
-			}
-			container.appendChild(getPersonCard(person));
-		}
-		animateFlipInElements('card');
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera ett DOM-element med info-kort om en person
-function getPersonCard(person) {
-	const personCard = createWrapperBox(undefined, '', ['card', 'card-person'], 'article');
-	const personName = createFieldTitle(person.name, "h2");
-	const personPhoto = createImageElement(person.profile_path, `Photo of ${person.name}`, './images/no-photo.png', '', '#');
-	personCard.append(
-		personPhoto,
-		personName,
-		createTextField("Profession", person.known_for_department),
-		createWorkHistoryList("Known from", person.known_for)
-	);
-
-	// Gör foto och namn klickbara för att visa detaljerad info
-	personName.setAttribute("person-id", person.id);
-	personName.addEventListener("click", showPersonDetails);
-	personPhoto.setAttribute("person-id", person.id);
-	personPhoto.addEventListener("click", showPersonDetails);
-	return personCard;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Returnera DOM-objekt med lista över filmer/serier en person medverkar i
+// Returnera klickbar lista över filmer/serier en person medverkar i (DOM-element)
 function createWorkHistoryList(title, workHistory) {
 	const historyBox = document.createElement("div");
 	const historyList = document.createElement("ul");

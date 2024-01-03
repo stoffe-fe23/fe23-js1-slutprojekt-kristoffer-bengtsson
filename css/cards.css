@@ -130,7 +130,7 @@
 }
 
 /*****************************************************************************************************/
-/* Visa detaljerat kort med info om en film eller person */
+/* Visa detaljerat kort med info om en film, serie eller person */
 
 #details {
   display: grid;
