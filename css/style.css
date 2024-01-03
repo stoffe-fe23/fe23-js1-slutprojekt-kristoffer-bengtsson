@@ -69,10 +69,12 @@ a:active {
   color: yellow;
 }
 
-.script-alert {
+/* Noscript-varning */
+header > span:first-of-type {
   display: block;
   margin: 0.5rem auto;
   text-align: center;
+  font-weight: 700;
 }
 
 /*****************************************************************************************************/
