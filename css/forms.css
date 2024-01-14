@@ -170,6 +170,38 @@ form button:not(:disabled):hover {
   display: block;
 }
 
+#search-form-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+#search-type, #search-input, #search-submit {
+  min-height: 2.2rem;
+  margin: 0;
+  border: 0;
+}
+
+#search-type {
+  border-radius: 15px 0px 0px 15px;
+}
+
+#search-input {
+  border-radius: 0;
+  outline: 0;
+}
+
+#search-submit {
+  border-radius: 0px 15px 15px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+}
+
+#search-form-wrapper label {
+  margin-right: 1rem;
+}
+
 /*****************************************************************************************************/
 /* Sid-navigation för sökresultat med flera sidor */
 
