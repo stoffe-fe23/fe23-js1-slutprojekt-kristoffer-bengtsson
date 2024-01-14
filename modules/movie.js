@@ -214,7 +214,7 @@ function createGenreList(title, genres) {
 		}
 	}
 	if (genreNames.length == 0) {
-		genreNames.push(" - ");
+		genreNames.push("Uncategorized");
 	}
 	return createListField(title, genreNames, "genre-list");
 }

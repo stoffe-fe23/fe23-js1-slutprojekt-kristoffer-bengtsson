@@ -129,6 +129,31 @@
   background-color: green;
 }
 
+
+.card .genre-list ul, 
+#details .genre-list ul {
+  display: flex;
+  list-style: none;
+  padding-left: 0;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.card .genre-list ul {
+  justify-content: center;
+}
+
+.card .genre-list ul li, 
+#details .genre-list ul li {
+  background-color: rgba(128,128,128, 0.7);
+  padding: 0.25rem 0.75rem;
+  margin: 0.3rem;
+  font-size: 0.8em;
+  font-weight: 700;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
 /*****************************************************************************************************/
 /* Visa detaljerat kort med info om en film, serie eller person */
 
